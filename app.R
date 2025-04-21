@@ -1,0 +1,1138 @@
+# ---- Install Libraries ----
+if (!requireNamespace("shiny", quietly = TRUE)) {
+  install.packages("shiny")
+}
+library(shiny)
+
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  install.packages("readxl")
+}
+library(readxl)
+
+if (!requireNamespace("bslib", quietly = TRUE)) {
+  install.packages("bslib")
+}
+library(bslib)
+
+if (!requireNamespace("shinythemes", quietly = TRUE)) {
+  install.packages("shinythemes")
+}
+library(shinythemes)
+
+if (!requireNamespace("shinyWidgets", quietly = TRUE)) {
+  install.packages("shinyWidgets")
+}
+library(shinyWidgets)
+
+if (!requireNamespace("decisionSupport", quietly = TRUE)) {
+  install.packages("decisionSupport")
+}
+library(decisionSupport)
+
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+library(tidyverse)
+
+if (!requireNamespace("readr", quietly = TRUE)) {
+  install.packages("readr")
+}
+library(readr)  # For reading and writing CSV files
+
+if (!requireNamespace("ggridges", quietly = TRUE)) {
+  install.packages("ggridges")
+}
+library(ggridges)
+
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+library(ggplot2)
+
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
+library(dplyr)
+if (!requireNamespace("here", quietly = TRUE)) {
+  install.packages("here")
+}
+library(here)
+
+source("functions/dynamic-helper.R")
+source("functions/Walnut_grain_veg_tub_mcsim-only.R")
+source("functions/funding_server.R")
+file_path_vars <- "data/Walnut_grain_veg_tub.xlsx"
+sheet_names <- unlist( readxl::read_excel(file_path_vars, sheet = "sheet_names") )
+
+
+#-----------------------------------------------------------------------------#
+# ---- Pre-requisites to UI ---------------------------------------------------
+#-----------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------#
+## ---- Countries and states --------------------------------------------------
+#-----------------------------------------------------------------------------#
+
+# country_states <-
+#   list(
+#     "None" = c("none"),
+#     "Belgium" = c("Flanders", "Wallonia", "Brussels"),
+#     "Bulgaria" = c("Blagoevgrad", "Burgas", "Varna"),
+#     "Czech Republic" = c("Prague", "Central Bohemian", "South Bohemian", "Plzeň",
+#                          "Karlovy Vary", "Ústí nad Labem", "Liberec", "Hradec Králové",
+#                          "Pardubice", "Vysočina", "South Moravian", "Olomouc",
+#                          "Zlín", "Moravian-Silesian"),
+#     "Denmark" = c("North Jutland", "Central Jutland", "Southern Denmark"),
+#     "England" = c("Bedfordshire", "Berkshire", "Bristol", "Buckinghamshire",
+#                   "Cambridgeshire", "Cheshire", "Cornwall", "Cumbria", "Derbyshire",
+#                   "Devon", "Dorset", "Durham", "East Sussex", "Essex", "Gloucestershire",
+#                   "Greater London", "Greater Manchester", "Hampshire", "Herefordshire",
+#                   "Hertfordshire", "Isle of Wight", "Kent", "Lancashire",
+#                   "Leicestershire", "Lincolnshire", "Merseyside", "Norfolk", "North Yorkshire",
+#                   "Northamptonshire", "Northumberland", "Nottinghamshire", "Oxfordshire",
+#                   "Rutland", "Shropshire", "Somerset", "South Yorkshire", "Staffordshire",
+#                   "Suffolk", "Surrey", "Tyne and Wear", "Warwickshire", "West Midlands",
+#                   "West Sussex", "West Yorkshire", "Wiltshire", "Worcestershire"),
+#     "France" = c("Auvergne-Rhône-Alpes", "Bourgogne-Franche-Comté", "Brittany", 
+#                  "Centre-Val de Loire", "Corsica", "French Guiana", "Grand Est", 
+#                  "Hauts-de-France", "Île-de-France", "Martinique", "Mayotte", "Normandy",
+#                  "Nouvelle-Aquitaine", "Occitanie", "Pays de la Loire", 
+#                  "Provence-Alpes-Côte d'Azur", "Réunion"),
+#     "Germany" = c("Baden-Württemberg", "Bavaria", "Berlin", "Brandenburg", "Bremen",
+#                   "Hamburg", "Hesse", "Lower Saxony", "Mecklenburg-Vorpommern",
+#                   "North Rhine-Westphalia", "Rhineland-Palatinate", "Saarland",
+#                   "Saxony", "Saxony-Anhalt", "Schleswig-Holstein", "Thuringia"),
+#     "Hungary" = c("Budapest", "Pest", "Csongrád"),
+#     "Italy" = c("Abruzzo", "Aosta Valley", "Apulia", "Basilicata", "Calabria", "Campania",
+#                 "Emilia-Romagna", "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardy",
+#                 "Marche", "Molise", "Piedmont", "Sardinia", "Sicily", "Trentino-South Tyrol",
+#                 "Tuscany", "Umbria", "Veneto"),
+#     "Northern Ireland" = c("Belfast", "Derry", "Lisburn"),
+#     "Portugal" = c("Açores", "Alentejo", "Algarve", "Centro", "Grande Lisboa", "Madeira", 
+#                    "Norte", "Península de Setúbal", "Oeste e Vale do Tejo"),
+#     "Scotland" = c("Edinburgh", "Glasgow", "Aberdeen"),
+#     "Spain" = c("Andalucía", "Aragón", "Asturias", "Baleares", "Canarias", "Cantabria", 
+#                 "Castilla-La Mancha", "Castilla y León", "Cataluña", "Extremadura", "Galicia", 
+#                 "Madrid", "Murcia", "Navarra", "País Vasco", "La Rioja", "Comunidad Valenciana"),
+#     "Wales" = c("Cardiff", "Swansea", "Newport")
+#   )
+# 
+# #-----------------------------------------------------------------------------#
+# ## ---- Funding data per country and state ------------------------------------
+# #-----------------------------------------------------------------------------#
+# # For demonstration purposes, I'll add example funding schemes for a few countries and states
+# funding_data <- 
+#   list(
+#     "None" = list(
+#       "none" = list(
+#         one_time_funding_schemes = c(),
+#         funding_onetime_values_named = setNames(c(),
+#                                                 c()),
+#         funding_onetime_per_ha_schemes = c(),
+#         funding_onetime_per_tree_schemes = c(),
+#         funding_onetime_percentage_schemes = c(),
+#         annual_funding_schemes = c(),
+#         funding_yearly_values_named = setNames(c(),c())
+#       )
+#     ),
+#     "England" = list(
+#       "Northumberland" = list(
+#         # one-time
+#         one_time_funding_schemes = c(
+#           "Countryside Stewardship - PA4 Agroforestry [GBP/ha]",
+#           "Countryside Stewardship - AF Woodland trees [GBP/tree]",
+#           "Countryside Stewardship - AF Fruit trees [GBP/tree]",
+#           "Tree guard (TE6) [GBP/guard/tree]",
+#           "Species Diversity Bonus (if more than 5 diff. species) [GBP/tree]",
+#           "Woodland Trust - MOREwoods Scheme (min. 0.5 ha woodland with 500+ trees) [% of initial costs]",
+#           "Woodland Trust - MOREwoods Scheme with contractor (min. 1 ha woodland) [% of initial costs]"
+#         ),
+#         funding_onetime_values_named = setNames(c(1268.08, 5.40, 17.83, 3.95, 1.16, 0.75, 0.6),
+#                                                 c("Countryside Stewardship - PA4 Agroforestry [GBP/ha]",
+#                                                   "Countryside Stewardship - AF Woodland trees [GBP/tree]",
+#                                                   "Countryside Stewardship - AF Fruit trees [GBP/tree]",
+#                                                   "Tree guard (TE6) [GBP/guard/tree]",
+#                                                   "Species Diversity Bonus (if more than 5 diff. species) [GBP/tree]",
+#                                                   "Woodland Trust - MOREwoods Scheme (min. 0.5 ha woodland with 500+ trees) [% of initial costs]",
+#                                                   "Woodland Trust - MOREwoods Scheme with contractor (min. 1 ha woodland) [% of initial costs]"
+#                                                 ) 
+#         ),
+#         funding_onetime_per_ha_schemes = c("Countryside Stewardship - PA4 Agroforestry [GBP/ha]"),
+#         funding_onetime_per_tree_schemes = c("Countryside Stewardship - AF Woodland trees [GBP/tree]",
+#                                              "Countryside Stewardship - AF Fruit trees [GBP/tree]",
+#                                              "Tree guard (TE6) [GBP/guard/tree]",
+#                                              "Species Diversity Bonus (if more than 5 diff. species) [GBP/tree]"
+#         ),
+#         funding_onetime_percentage_schemes = c("Woodland Trust - MOREwoods Scheme (min. 0.5 ha woodland with 500+ trees) [% of initial costs]",
+#                                                "Woodland Trust - MOREwoods Scheme with contractor (min. 1 ha woodland) [% of initial costs]"
+#         ),
+#         #annual
+#         annual_funding_schemes = c("SFI Premium payment - low density AF on less sensitive land [GBP/ha/year]",
+#                                    "SFI Premium payment - low density AF on more sensitive land [GBP/ha/year]",
+#                                    "SFI Premium payment - medium density in-field AF [GBP/ha/year]",
+#                                    "SFI Premium payment - high density in-field AF [GBP/ha/year]"
+#         ),
+#         funding_yearly_values_named = setNames(c(385, 385, 595, 849),
+#                                                c("SFI Premium payment - low density AF on less sensitive land [GBP/ha/year]",
+#                                                  "SFI Premium payment - low density AF on more sensitive land [GBP/ha/year]",
+#                                                  "SFI Premium payment - medium density in-field AF [GBP/ha/year]",
+#                                                  "SFI Premium payment - high density in-field AF [GBP/ha/year]"
+#                                                ) 
+#         )
+#       ),
+#       # not real subsidy schemes!!!
+#       "Kent" = list(
+#         one_time_funding_schemes = c("Kent Scheme - Tree Planting [GBP/tree]",
+#                                      "Kent Scheme - Land Preparation [GBP/ha]"),
+#         funding_onetime_values_named = setNames(c(10, 500),
+#                                                 c("Kent Scheme - Tree Planting [GBP/tree]",
+#                                                   "Kent Scheme - Land Preparation [GBP/ha]")),
+#         funding_onetime_per_ha_schemes = c("Kent Scheme - Land Preparation [GBP/ha]"),
+#         funding_onetime_per_tree_schemes = c("Kent Scheme - Tree Planting [GBP/tree]"),
+#         funding_onetime_percentage_schemes = c(),
+#         annual_funding_schemes = c("Kent Annual Support [GBP/ha/year]" ),
+#         funding_yearly_values_named = setNames(c(100),c("Kent Annual Support [GBP/ha/year]"))
+#       )
+#     ),
+#     # Add more countries and states with their funding schemes here - T6.3
+#     "Germany" = list(
+#       "Bavaria" = list(one_time_funding_schemes = c("Bavaria Start-up Aid [EURO/ha]",
+#                                                     "Bavaria Tree Grant [EURO/tree]" ),
+#                        funding_onetime_values_named = setNames(c(800, 15),
+#                                                                c( "Bavaria Start-up Aid [EURO/ha]",
+#                                                                   "Bavaria Tree Grant [EURO/tree]")),
+#                        funding_onetime_per_ha_schemes = c("Bavaria Start-up Aid [EURO/ha]"),
+#                        funding_onetime_per_tree_schemes = c("Bavaria Tree Grant [EURO/tree]"),
+#                        funding_onetime_percentage_schemes = c(),
+#                        annual_funding_schemes = c("Bavaria Annual Payment [EURO/ha/year]"),
+#                        funding_yearly_values_named = setNames(c(200),c("Bavaria Annual Payment [EURO/ha/year]") )
+#       )
+#     ),
+#     "Belgium" = list(
+#       "Flanders" = list(one_time_funding_schemes = c(
+#         "CAP establishment support [% of total establishment costs]"
+#       ),
+#       funding_onetime_values_named = setNames(c(0.75),
+#                                               c("CAP establishment support [% of total establishment costs]"
+#                                               )
+#       ),
+#       funding_onetime_percentage_schemes = c("CAP establishment support [% of total establishment costs]"),
+#       annual_funding_schemes = c("Flanders Annual Payment [EURO/ha/year]"),
+#       funding_yearly_values_named = setNames(c(378),c("Flanders Annual Payment [EURO/ha/year]"))
+#       )
+#     )
+#     
+#   )
+
+#-----------------------------------------------------------------------------#
+# ---- Main UI function (skeleton) --------------------------------------------
+#-----------------------------------------------------------------------------#
+ui <- fluidPage(
+  
+  theme = bs_theme(version = 5,
+                   bootswatch = 'flatly',
+                   base_font = font_google("Roboto")), 
+  
+  titlePanel(
+    tags$div(
+      style = "display:flex; align-items:center;justify-content:space-between;
+      width: 100% !important; margin: 20px; padding: 0 15px;
+      box-sizing: border-box; background-color: #f2f2f2;",
+      
+      # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
+      tags$img(src = "UniBonnHortiBonn_logo_transparent.png", height = "100px",
+               style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
+      # ),
+      
+      tags$h2("Walnut alley cropping",
+              style = "text-align: center; flex-grow: 1;"),
+      
+      # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
+      tags$img(src = "ReFOREST_logo_horizontal_transparent.png", height = "100px",
+               style = "margin-right: auto; max-width: 30%; height: auto; cursor: pointer;")
+      # ),
+    ),
+  ),
+  
+  sidebarLayout(
+    sidebarPanel(width = 4,
+                 style = "height: 100%; overflow-y: auto",
+                 
+                 accordion(
+                   id = "collapseSidebar",
+                   open = FALSE,
+                   
+                   actionButton("run_simulation", "Run Model", icon = icon("play"), class = "btn-primary"),
+                   
+                   # accordion_panel(
+                   #   title = "Save/Load Project",
+                   #   icon = icon("floppy-disk"),
+                   #   textInput("project_name", "Project Name:", value = ""),
+                   #   actionButton("save", "Save Settings")
+                   # ),
+                   
+                   
+                   # --------------------------------------------------------------------
+                   #  *NEW* Funding schemes – pulled from Excel by the module  -----------
+                   # --------------------------------------------------------------------
+                   accordion_panel(
+                     title = "Funding schemes", icon = icon("euro-sign"),
+                     
+                     # ↓↓↓ the next line replaces ~100 lines of hand‑built inputs
+                     create_funding_ui("funding")
+                   ),
+                   # --------------------------------------------------------------------
+                   # Old Funding schemes – pulled from Excel by the module  -----------
+                   # --------------------------------------------------------------------
+                   
+                   #   # Dropdown menu of countries, state and funding schemes
+                   #   selectInput("country", "Select Country:", choices = names(country_states), selected = NULL),
+                   #   uiOutput("state_ui"),
+                   #   uiOutput("funding_one_ui"),
+                   #   uiOutput("funding_yearly_ui"),
+                   #   numericInput("annual_external_support_c", "Annual private support [GBP/ha]",
+                   #                min = 1, max = 5000, value = 50),
+                   #   numericInput("onetime_external_support_c", "One-time private support [GBP]",
+                   #                min = 1, max = 1000000, value = 500)
+                   # ),
+                   uiOutput("dynamic_element_ui")
+                   
+                 )
+                 
+    ),
+    mainPanel(width = 8, 
+              h5("Hola amigos!"),
+              #column(width = 4,
+              tags$a("Click here for latest info on Sustainable Farming Incentive",
+                     href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
+                     target="_blank",
+                     class = "my-btn"
+                     #)
+              ),
+              br(),
+              h5('Plots'),
+              plotOutput("plot1_ui"),
+              plotOutput("plot2_ui"),
+              plotOutput("plot3_ui"),
+              plotOutput("plot4_ui"),
+              plotOutput("plot5_ui"),
+              plotOutput("plot6_ui"),
+              plotOutput("plot7_ui"),
+              plotOutput("plot8_ui"),
+              plotOutput("plot9_ui"),
+    )
+  )
+  
+)
+
+#-----------------------------------------------------------------------------#
+# ---- Server logic -----------------------------------------------------------
+#-----------------------------------------------------------------------------#
+
+server <- function(input, output, session) {
+  
+  # -------------------------------------------------------------------------
+  # ---- Dynamic funding module ---------------------------------------------
+  # -------------------------------------------------------------------------
+  funding <- funding_server("funding")   # returns a list of reactives
+  
+  # Helper for safe extraction from named vector ----------------------------
+  safe_get <- function(vec, name) {
+    if (is.null(vec) || length(vec) == 0 || is.na(vec[name])) return(0)
+    if (! name %in% names(vec)) return(0)
+    as.numeric(vec[name])
+  }
+  
+  # -------------------------------------------------------------------------
+  # ---- Wrapper → *exact* variables the walnut model expects ---------------
+  # -------------------------------------------------------------------------
+  funding_variables <- reactive({
+    sel <- funding$category_totals()        # named vector per category (gov)
+    
+    # private inputs ---------------------------------------------------------
+    onetime_private <- funding$onetime_private_input()
+    annual_private  <- funding$annual_private_input()
+    
+    # area / trees already entered elsewhere in UI --------------------------
+    AF1_area  <- max(0, as.numeric(input$arable_area_c) - as.numeric(input$AF1_tree_row_area_c))
+    AF2_area  <- max(0, as.numeric(input$arable_area_c) - as.numeric(input$AF2_tree_row_area_c))
+    AF1_trees <- as.numeric(input$AF1_num_trees_c)
+    AF2_trees <- sum(as.numeric(input$num_oak_trees_c), as.numeric(input$num_birch_trees_c),
+                     as.numeric(input$num_rowan_trees_c), as.numeric(input$num_hazel_trees_c),
+                     as.numeric(input$num_damson_trees_c), as.numeric(input$num_bcherry_trees_c))
+    
+    # funding amounts per category -----------------------------------------
+    per_ha      <- safe_get(sel, "funding_onetime_per_ha_schemes_c")
+    per_tree    <- safe_get(sel, "funding_onetime_per_tree_schemes_c")
+    annual_ha   <- safe_get(sel, "annual_funding_schemes_c")
+    perc_incost <- safe_get(sel, "funding_onetime_percentage_incost_schemes_c")
+    perc_cons   <- safe_get(sel, "funding_onetime_percentage_consult_schemes_c")
+    
+    # Compute totals --------------------------------------------------------
+    AF1_one_time   <- per_ha   * AF1_area  + per_tree * AF1_trees + onetime_private
+    AF2_one_time   <- per_ha   * AF2_area  + per_tree * AF2_trees + onetime_private
+    AF1_annual     <- annual_ha * AF1_area + annual_private * AF1_area
+    AF2_annual     <- annual_ha * AF2_area + annual_private * AF2_area
+    
+    AF1_perc <- perc_incost   # tie whichever category you decide to AF1
+    AF2_perc <- perc_cons     # … and AF2
+    any_perc <- as.numeric((AF1_perc + AF2_perc) > 0)
+    
+    data.frame(
+      variable = c("AF1_total_annual_funding_c", "AF2_total_annual_funding_c",
+                   "AF1_total_one_time_funding_c", "AF2_total_one_time_funding_c",
+                   "AF2_percentage_values_c", "AF1_percentage_values_c",
+                   "selected_percentage_c"),
+      lower = c(AF1_annual, AF2_annual, AF1_one_time, AF2_one_time,
+                AF2_perc, AF1_perc, any_perc),
+      upper = c(AF1_annual, AF2_annual, AF1_one_time, AF2_one_time,
+                AF2_perc, AF1_perc, any_perc),
+      distribution = "const",
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  
+  # -------------------------------------------------------------------------
+  # ---- 2.3  *Old* funding machinery – retained for reference -------------------
+  # -------------------------------------------------------------------------
+  # # Ensure reactive values are used correctly
+  # tidy_funding_data <- reactive({
+  #   if (exists("funding_data")) {
+  #     return(isolate(funding_data()))
+  #   }
+  #   return(list())
+  # })
+  # 
+  # funding_data_reactive <- reactive({ return (funding_data) })
+  # 
+  # # Fix UI rendering to use tagList instead of list
+  # output$state_ui <- renderUI({
+  #   if (is.null(input$country)) return(NULL)
+  #   req(input$country)
+  #   tagList(
+  #     selectInput("state", "Select State:", choices = country_states[[input$country]], selected = NULL)
+  #   )
+  # })
+  # # Show funding schemes dropdown after state selection
+  # # One-time funding Schemes
+  # output$funding_one_ui <- renderUI({
+  #   req(input$country, input$state)
+  #   country <- input$country
+  #   state <- input$state
+  #   
+  #   if (!is.null(funding_data_reactive()[[country]]) && !is.null(funding_data_reactive() [[country]][[state]])) {
+  #     state_data <- funding_data_reactive() [[country]][[state]]
+  #     return(tagList(
+  #       selectInput("funding_one_ui", "Select One-time Funding Scheme(s):", 
+  #                   choices = if (!is.null(state_data$one_time_funding_schemes)) state_data$one_time_funding_schemes else list(),
+  #                   multiple = TRUE)
+  #     ))
+  #   }
+  #   return(NULL)
+  # })
+  # # Annual funding Schemes
+  # output$funding_yearly_ui <- renderUI({
+  #   req(input$state, input$country)
+  #   country <- input$country
+  #   state <- input$state
+  #   
+  #   if (!is.null(funding_data_reactive() [[country]]) && !is.null(funding_data_reactive() [[country]][[state]])) {
+  #     state_data <- funding_data_reactive()[[country]][[state]]
+  #     return(tagList(
+  #       selectInput("funding_yearly_ui", "Select Annual Funding Scheme(s):", 
+  #                   choices = if (!is.null(state_data$annual_funding_schemes)) state_data$annual_funding_schemes else list(),
+  #                   multiple = FALSE)
+  #     ))
+  #   }
+  #   return(NULL)
+  # })
+  # 
+  # #### Funding estimates ####
+  # funding_variables <- reactive({
+  #   message("Accessing funding estimates...")
+  #   country <- input$country
+  #   state   <- input$state
+  #   
+  #   # Default funding values (0 when no country/state is selected)
+  #   selected_percentage_c <- 0
+  #   AF1_total_one_time_funding_c  <- 0
+  #   AF1_total_annual_funding_c    <- 0
+  #   AF1_percentage_values_c       <- 0
+  #   AF2_total_one_time_funding_c  <- 0
+  #   AF2_total_annual_funding_c    <- 0
+  #   AF2_percentage_values_c       <- 0
+  #   
+  #   # Validate area calculations (default to 0 if inputs are missing)
+  #   AF1_area <- max(0, as.numeric(input$arable_area_c) - as.numeric(input$AF1_tree_row_area_c))
+  #   AF2_area <- max(0, as.numeric(input$arable_area_c) - as.numeric(input$AF2_tree_row_area_c))
+  #   
+  #   # Default funding values
+  #   AF1_one_funding <- 0
+  #   AF1_annual_funding <- 0
+  #   AF2_one_funding <- 0
+  #   AF2_annual_funding <- 0
+  #   
+  #   # Only process funding calculations if both country and state are selected
+  #   if (!is.null(country) && !is.null(state) && country != "None" && state != "None") {
+  #     if (!is.null(funding_data_reactive()[[country]]) &&
+  #         !is.null(funding_data_reactive()[[country]][[state]])) {
+  #       
+  #       state_data <- funding_data_reactive()[[country]][[state]]
+  #       
+  #       # ---- AF1 One-Time Funding ----
+  #       AF1_selected_per_ha <- intersect(input$funding_one_ui, state_data$funding_onetime_per_ha_schemes)
+  #       if (length(AF1_selected_per_ha) > 0) {
+  #         AF1_per_ha_values <- state_data$funding_onetime_values_named[AF1_selected_per_ha]
+  #         AF1_one_funding <- sum(AF1_per_ha_values) * AF1_area
+  #       }
+  #       
+  #       AF1_selected_per_tree <- intersect(input$funding_one_ui, state_data$funding_onetime_per_tree_schemes)
+  #       if (length(AF1_selected_per_tree) > 0) {
+  #         AF1_per_tree_values <- state_data$funding_onetime_values_named[AF1_selected_per_tree]
+  #         AF1_one_funding <- AF1_one_funding + sum(AF1_per_tree_values) * input$AF1_num_trees_c
+  #       }
+  #       
+  #       AF1_selected_percentage <- intersect(input$funding_one_ui, state_data$funding_onetime_percentage_schemes)
+  #       if (length(AF1_selected_percentage) > 0) {
+  #         selected_percentage_c <- 1
+  #         AF1_percentage_values_c <- sum(state_data$funding_onetime_values_named[AF1_selected_percentage])
+  #       }
+  #       
+  #       AF1_one_funding <- AF1_one_funding + input$onetime_external_support_c
+  #       AF1_total_one_time_funding_c <- AF1_one_funding
+  #       
+  #       # ---- AF1 Annual Funding ----
+  #       AF1_selected_annual <- intersect(input$funding_yearly_ui, state_data$annual_funding_schemes)
+  #       if (length(AF1_selected_annual) > 0) {
+  #         AF1_annual_values <- state_data$funding_yearly_values_named[AF1_selected_annual]
+  #         AF1_annual_funding <- sum(AF1_annual_values) * field_area_c
+  #       }
+  #       
+  #       AF1_total_annual_funding_c <- AF1_annual_funding + input$annual_external_support_c * field_area_c
+  #       
+  #       # ---- AF2 One-Time Funding ----
+  #       AF2_selected_per_ha <- intersect(input$funding_one_ui, state_data$funding_onetime_per_ha_schemes)
+  #       if (length(AF2_selected_per_ha) > 0) {
+  #         AF2_per_ha_values <- state_data$funding_onetime_values_named[AF2_selected_per_ha]
+  #         AF2_one_funding <- sum(AF2_per_ha_values) * AF2_area
+  #       }
+  #       
+  #       AF2_selected_per_tree <- intersect(input$funding_one_ui, state_data$funding_onetime_per_tree_schemes)
+  #       if (length(AF2_selected_per_tree) > 0) {
+  #         AF2_per_tree_values <- state_data$funding_onetime_values_named[AF2_selected_per_tree]
+  #         total_AF2_trees <- sum(input$num_oak_trees_c, input$num_birch_trees_c,
+  #                                input$num_rowan_trees_c, input$num_hazel_trees_c,
+  #                                input$num_damson_trees_c, input$num_bcherry_trees_c)
+  #         AF2_one_funding <- sum(AF2_per_tree_values) * total_AF2_trees
+  #       }
+  #       
+  #       AF2_selected_percentage <- intersect(input$funding_one_ui, state_data$funding_onetime_percentage_schemes)
+  #       if (length(AF2_selected_percentage) > 0) {
+  #         selected_percentage_c <- 1
+  #         AF2_percentage_values_c <- sum(state_data$funding_onetime_values_named[AF2_selected_percentage])
+  #       }
+  #       
+  #       AF2_one_funding <- AF2_one_funding + input$onetime_external_support_c
+  #       AF2_total_one_time_funding_c <- AF2_one_funding
+  #       
+  #       # ---- AF2 Annual Funding ----
+  #       AF2_selected_annual <- intersect(input$funding_yearly_ui, state_data$annual_funding_schemes)
+  #       if (length(AF2_selected_annual) > 0) {
+  #         AF2_annual_values <- state_data$funding_yearly_values_named[AF2_selected_annual]
+  #         AF2_annual_funding <- sum(AF2_annual_values) * AF2_area
+  #       }
+  #       
+  #       AF2_annual_funding <- AF2_annual_funding + input$annual_external_support_c * AF2_area
+  #       AF2_total_annual_funding_c <- AF2_annual_funding
+  #     }
+  #   }
+  #   
+  #   # ---- Store Results in Data Frame ----
+  #   funding_parameters <- c(
+  #     "AF1_total_annual_funding_c", "AF2_total_annual_funding_c",
+  #     "AF1_total_one_time_funding_c", "AF2_total_one_time_funding_c",
+  #     "AF2_percentage_values_c", "AF1_percentage_values_c",
+  #     "selected_percentage_c")
+  #   selected_values_funding <- c(
+  #     AF1_total_annual_funding_c, AF2_total_annual_funding_c,
+  #     AF1_total_one_time_funding_c, AF2_total_one_time_funding_c,
+  #     AF2_percentage_values_c, AF1_percentage_values_c,
+  #     selected_percentage_c)
+  #   funding_variables_df <- data.frame(
+  #     variable = funding_parameters,
+  #     lower = selected_values_funding,
+  #     upper = selected_values_funding,
+  #     distribution = rep("const", length(funding_parameters)),
+  #     stringsAsFactors = FALSE
+  #   )
+  #   message("Funding Variables Updated: ")
+  #   #print(funding_variables_df)
+  #   return(funding_variables_df)
+  # })
+  # #### End of funding estimates ####
+  
+  
+  # Crop rotation estimates####
+  crop_estimates <- reactive({
+    message("Accessing crop estimates...")
+    treeless_system_crop_rotation_1_c <- if (input$treeless_crop_rotation == "rotation_1") 1 else 0
+    treeless_system_crop_rotation_2_c <- if (input$treeless_crop_rotation == "rotation_2") 1 else 0 
+    AF1_system_crop_rotation_1_c <- if (input$AF1_crop_rotation == "rotation_1") 1 else 0
+    AF1_system_crop_rotation_2_c <- if (input$AF1_crop_rotation == "rotation_2") 1 else 0
+    AF2_system_crop_rotation_1_c <- if (input$AF2_crop_rotation == "rotation_1") 1 else 0
+    AF2_system_crop_rotation_2_c <- if (input$AF2_crop_rotation == "rotation_2") 1 else 0
+    
+    crop_parameters <- c("treeless_system_crop_rotation_1_c", "treeless_system_crop_rotation_2_c", "AF1_system_crop_rotation_1_c", "AF1_system_crop_rotation_2_c", "AF2_system_crop_rotation_1_c", "AF2_system_crop_rotation_2_c")
+    selected_values_crops <- c(treeless_system_crop_rotation_1_c, treeless_system_crop_rotation_2_c, AF1_system_crop_rotation_1_c, AF1_system_crop_rotation_2_c, AF2_system_crop_rotation_1_c, AF2_system_crop_rotation_2_c)
+    
+    crop_data <- data.frame(
+      variable = crop_parameters,
+      lower = selected_values_crops,
+      upper = selected_values_crops,
+      distribution = rep("const", length(crop_parameters)),
+      stringsAsFactors = FALSE
+    )
+  })
+  #### End of Crop estimates ####
+  
+  #-----------------------------------------------------------------------------#
+  ## ---- dynamic UI ------------------------------------------------------------
+  #-----------------------------------------------------------------------------#
+  
+  excelData <- reactive({
+    sheet_number <- seq_along(sheet_names)+1
+    all_sheets <- lapply(sheet_number, function(sht) {
+      readxl::read_excel(file_path_vars, sheet = sht
+                         ,col_types = c("text", "numeric", "numeric", "text", "text", "text", "guess", "guess")
+      )
+    })
+    names(all_sheets) <- sheet_names
+    all_sheets
+  })
+  output$dynamic_element_ui <- renderUI({
+    data_list <- excelData()
+    sheet_names <- names(data_list)
+    sheet_num <- length(data_list)
+    element_list <- list()
+    for (j in 1:sheet_num) {
+      element_list[[j]] <-
+        lapply(seq_len(nrow(data_list[[j]])),
+               function(i) {
+                 create_ui_element(data_list[[j]][i, ])
+               })
+      # if (endsWith(names(data_list[[j]]), "_q")) {
+      #
+      # }
+      #
+    }
+    # View(element_list)
+    
+    tagList(
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[1]),
+        icon = icon("bullseye"),
+        #h4("System Modulators"),
+        element_list[[1]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[2]),
+        icon = icon("grip"),
+        #h4("Farm Details"),
+        element_list[[2]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[3]),
+        icon = icon("cart-shopping"),
+        #h4("System Modulators"),
+        element_list[[3]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[4]),
+        icon = icon("people-group"),
+        #h4("System Modulators"),
+        element_list[[4]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[5]),
+        icon = icon("seedling"),
+        #h4("System Modulators"),
+        element_list[[5]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[6]),
+        icon = icon("tree"),
+        #h4("System Modulators"),
+        element_list[[6]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[7]),
+        icon = icon("route"),
+        #h4("System Modulators"),
+        element_list[[7]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[8]),
+        icon = icon("person-chalkboard"),
+        #h4("System Modulators"),
+        element_list[[8]]
+      ),
+      # ---- old funding ----
+      # accordion_panel(
+      #   title = sub("_q$", "", sheet_names[9]),
+      #   icon = icon("check-double"),
+      #   #h4("System Modulators"),
+      #   element_list[[9]]
+      # ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[10]),
+        icon = icon("atom"),
+        #h4("System Modulators"),
+        element_list[[10]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[11]),
+        icon = icon("square-poll-vertical"),
+        #h4("System Modulators"),
+        element_list[[11]]
+      ),
+      accordion_panel(
+        title = sub("_q$", "", sheet_names[12]),
+        icon = icon("water"),
+        #h4("System Modulators"),
+        element_list[[12]]
+      )
+    )
+    
+  })
+  
+  #-----------------------------------------------------------------------------#
+  ## ---- Monte Carlo Simulation ------------------------------------------------
+  #-----------------------------------------------------------------------------#
+  
+  mcSimulation_results <- eventReactive(input$run_simulation, {
+    message("Accessing user input estimates from the interface...")
+    
+    exclude_inputs <- c("collapseSidebar", "save", "load", "delete", "confirm_delete",
+                        "admin_selected_user", "project_name", "version_select", "delete_version_select")
+    variables <- setdiff(names(input)[grepl("(_c$|_p$|_t$|_n$|_cond$)", names(input))], exclude_inputs)
+    
+    lower_values <- sapply(variables, function(var) {
+      value <- input[[var]]
+      if (length(value) == 1) as.numeric(value) else as.numeric(value[1])
+    })
+    upper_values <- sapply(variables, function(var) {
+      value <- input[[var]]
+      if (length(value) == 1) as.numeric(value) else as.numeric(value[2])
+    })
+    # distributions <- sapply(variables, function(var) {
+    #   if (grepl("_c$", var)) "const" else if (grepl("_p$", var)) "posnorm" else if (grepl("_t$", var)) "tnorm_0_1" else if (grepl("_n$", var)) "norm"
+    # })
+    
+    data_excel_original <- excelData()
+    data_excel_original_r <- sapply(data_excel_original, nrow)
+    data_excel_original_n <- names(data_excel_original)
+    
+    excel_temp <- data_excel_original %>%
+      do.call("rbind",.)
+    
+    df_tmp <- data.frame(variable = variables,
+                         lower = lower_values,
+                         upper = upper_values)
+    
+    idx <- match(excel_temp$variable, df_tmp$variable)
+    excel_temp$lower <- lower_values[idx]
+    excel_temp$upper <- upper_values[idx]
+    # excel_temp&distributions <- distributions
+    
+    sheet_index <- rep(seq_along(data_excel_original_r), data_excel_original_r)
+    data_excel_updated <- split(excel_temp, sheet_index)
+    names(data_excel_updated) <- data_excel_original_n
+    
+    saveRDS(c(list(sheet_names),data_excel_updated), "data/Walnut_grain_veg_tub_ui_updated.RDS")
+    
+    input_file <- data_excel_updated %>% bind_rows()
+    
+    
+    # ------------------------------------------------------------------
+    # >>> NEW: overwrite / append the seven variables coming from
+    #          the dynamic funding wrapper and make sure nothing is NA
+    # ------------------------------------------------------------------
+    fund_df <- funding_variables()
+    print(fund_df)
+    fund_df$lower[is.na(fund_df$lower)] <- 0
+    fund_df$upper[is.na(fund_df$upper)] <- 0
+    input_file <- bind_rows(
+      input_file %>% filter(!variable %in% fund_df$variable),
+      fund_df
+    )
+    
+    decisionSupport::mcSimulation(
+      estimate = decisionSupport::as.estimate(input_file),
+      model_function = Walnut_grain_veg_tub,
+      numberOfModelRuns = input$num_simulations_c,
+      functionSyntax = "plainNames")
+  })
+  
+  observeEvent(mcSimulation_results(), {
+    
+    mc_data <- mcSimulation_results()
+    
+    #-----------------------------------------------------------------------------#
+    ## ---- generating plots ------------------------------------------------------
+    #-----------------------------------------------------------------------------#
+    plot1 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
+                                          method = 'smooth_simple_overlay',
+                                          old_names = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "NPV")+
+      ggtitle("Net Present Value (over a 40-years' timescope) of a farming decision")+
+      #ggtitle("Carbon stock of in the aboveground biomass of a clear-cut agroforestry plot")+
+      theme(plot.title = element_text(hjust = 0.5),
+            #axis.text.y=element_blank(),
+            #axis.text.x=element_blank(),
+            #axis.line = element_line(arrow = arrow(type="open")),
+            #panel.border = element_blank(),
+            legend.position="bottom")
+    #xlim(0, 1e7)
+    
+    
+    plot2 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
+                                          method = 'boxplot',
+                                          old_names = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "NPV")+
+      ggtitle("Net Present Value (over a 40-years' timescope) of a farming decision")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot3 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("planing_costs", "planting_cost", "strips_maintenance","application_cost"),
+                                          method = 'boxplot',
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Wood harvest costs and income")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot4 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("nuts_costs","nut_sales"),
+                                          method = 'boxplot',
+                                          old_names = c("nuts_costs", "nut_sales"),
+                                          new_names = c("Production costs", "Sales"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Walnuts production direct costs and income")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot5 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("wood_harvest_costs","wood_sales"),
+                                          method = 'boxplot',
+                                          old_names = c("wood_harvest_costs", "wood_sales"),
+                                          new_names = c("Production costs", "Sales"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Wood harvest costs and income")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot6 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("leek_AF","leek_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("leek_AF", "leek_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of leek production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot7 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("maize_AF","maize_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("maize_AF", "maize_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of maize production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot8 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("carrot_AF","carrot_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("carrot_AF", "carrot_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of carrot production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot9 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("celeriac_AF","celeriac_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("celeriac_AF", "celeriac_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of celeriac production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot10 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("potato_AF","potato_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("potato_AF", "potato_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of potato production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot11 <- 
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("wheat_AF","wheat_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("wheat_AF", "wheat_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of wheat production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot12 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = c("beans_AF","beans_CR"),
+                                          method = 'boxplot',
+                                          old_names = c("beans_AF", "beans_CR"),
+                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
+                                          x_axis_name = "Annual sum over 40 years")+
+      ggtitle("Cashlow sum of beans production")+
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    plot13 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+                                          vars = "NPV_decision_AF1",
+                                          old_names = "NPV_decision_AF1",
+                                          new_names = "NPV (over 40 years) of establishing agroforestry system",
+                                          method = 'boxplot_density',
+                                          y_axis_name = "Probability",
+                                          x_axis_name = "Net decision outcome (NPV in Euro)")
+    
+    plot14 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Discounted_Cashflow_AF1", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Discounted_Cashflow (euros)")+
+      ggtitle("Discounted Cashflow of the agroforestry intervention")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot15 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Discounted_Cum_Cashflow_AF1", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Discounted_Cashflow (euros)")+
+      ggtitle("Discounted cumulative Cashflow of the agroforestry intervention")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot16 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Discounted_Cashflow_AF1_decision", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Discounted_Cashflow (euros)")+
+      ggtitle("Discounted Cashflow of the agroforestry decision")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot17 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Discounted_Cum_Cashflow_AF1_decision", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Discounted_Cashflow (euros)")+
+      ggtitle("Discounted cumulative Cashflow of the agroforestry decision")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot18 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Cashflow_AF1_decision", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Cashflow (euros)")+
+      ggtitle("Cashflow of the agroforestry decision")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot19 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "Cum_Cashflow_AF1_decision", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Cashflow (euros)")+
+      ggtitle("Cumulative Cashflow of the agroforestry decision")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot20 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "implementation_labor", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Worker-hours")+
+      ggtitle("Worker-hours required to design and establish the agroforestry system")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot21 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "additional_yearly_labor", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Worker-hours")+
+      ggtitle("Time required to manage the agroforestry system (walnuts harvest excluded)")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot22 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "total_additional_labor", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Worker-hours")+
+      ggtitle("Additional time required by the agroforestry intervention (walnuts harvest excluded)")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot23 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "annual_soc_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C / ha")+
+      ggtitle("Annual soil carbon change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot24 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "cum_annual_soc_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C / ha")+
+      ggtitle("Cumulative annual soil carbon change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot25 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "soc_stock", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C / ha")+
+      ggtitle("Soil carbon stock dynamics")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot26 <-
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "annual_carbon_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("Whole ecosystem's annual carbon stock change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot27 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "cum_annual_carbon_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("Whole ecosystem's cumulative annual carbon stock change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot28 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "carbon_stock", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("Whole ecosystem's carbon stock dynamics")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot29 <-
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "AGB_carbon_stock", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("AGB carbon stock dynamics")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot30 <-
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "AGB_carbon_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("Annual AGB carbon stock change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot31 <-
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "BGB_carbon_stock", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("BGB carbon stock dynamics")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot32 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "BGB_carbon_change", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "t C")+
+      ggtitle("Annual BGB carbon stock change")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    #ylim(-500000,1000000)
+    
+    plot33 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "volume", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "m3")+
+      ggtitle("Timber volume dynamics")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    
+    #-----------------------------------------------------------------------------#
+    ## ---- sending plots to ui ---------------------------------------------------
+    #-----------------------------------------------------------------------------#
+    
+    output$plot1_ui <- renderPlot({
+      plot1
+    })
+    output$plot2_ui <- renderPlot({
+      plot2
+    })
+    output$plot3_ui <- renderPlot({
+      plot3
+    })
+    output$plot4_ui <- renderPlot({
+      plot4
+    })
+    output$plot5_ui <- renderPlot({
+      plot5
+    })
+    output$plot6_ui <- renderPlot({
+      plot6
+    })
+    output$plot7_ui <- renderPlot({
+      plot7
+    })
+    output$plot8_ui <- renderPlot({
+      plot8
+    })
+    output$plot9_ui <- renderPlot({
+      plot9
+    })
+    
+  })
+  
+  #-----------------------------------------------------------------------------#
+  ## ---- plotting --------------------------------------------------------------
+  #-----------------------------------------------------------------------------#
+  
+}
+
+shinyApp(ui = ui, server = server)

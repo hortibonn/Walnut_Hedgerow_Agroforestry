@@ -262,7 +262,18 @@ ui <- fluidPage(
                    id = "collapseSidebar",
                    open = FALSE,
                    
-                   actionButton("run_simulation", "Run Model", icon = icon("play"), class = "btn-primary"),
+                   br(),
+                   div(
+                     class = "text-center",
+                     actionButton("run_simulation", "Run Model",
+                                  icon = icon("play"), class = "btn-primary")
+                   ),
+                   br(),
+                   accordion_panel(
+                     title = "Filter parameters", icon = icon("clipboard-question"),
+                     uiOutput("category_filter_ui")
+                   ),
+                   br(),
                    
                    # accordion_panel(
                    #   title = "Save/Load Project",
@@ -573,6 +584,28 @@ server <- function(input, output, session) {
   # #### End of funding estimates ####
   
   
+  # helper that sanitises category names into safe IDs
+  sanitize <- function(x) gsub("[^A-Za-z0-9]", "_", x)
+  
+  #  all categories across every sheet  ----
+  categories <- reactive({
+    cats <- unique(unlist(lapply(excelData(), function(df) df$Expertise)))
+    cats <- cats[!is.na(cats) & cats != ""]
+    trimws(unique(unlist(strsplit(cats, ";"))))
+  })
+  
+  # filter bar UI  ----
+  output$category_filter_ui <- renderUI({
+    if (length(categories()) == 0) return(NULL)
+    tagList(
+      lapply(categories(), function(cat){
+        checkboxInput(
+          paste0("cat_", sanitize_id(cat)), cat, value = FALSE)
+      }),
+      tags$hr()
+    )
+  })
+  
   # Crop rotation estimates####
   crop_estimates <- reactive({
     message("Accessing crop estimates...")
@@ -603,13 +636,18 @@ server <- function(input, output, session) {
   excelData <- reactive({
     sheet_number <- seq_along(sheet_names)+1
     all_sheets <- lapply(sheet_number, function(sht) {
-      readxl::read_excel(file_path_vars, sheet = sht
-                         ,col_types = c("text", "numeric", "numeric", "text", "text", "text", "guess", "guess")
+      readxl::read_excel(file_path_vars, sheet = sht,
+                         col_types = c("text", "numeric", "numeric", "text", "text", "text", "guess", "guess","text")
       )
     })
     names(all_sheets) <- sheet_names
     all_sheets
   })
+  
+  
+  
+  
+  
   output$dynamic_element_ui <- renderUI({
     data_list <- excelData()
     sheet_names <- names(data_list)

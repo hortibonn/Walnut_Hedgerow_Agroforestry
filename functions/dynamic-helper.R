@@ -1,207 +1,98 @@
-#----------------------------------------------------------------------#
-# UI input based on ui_type (it can be modified) #######################
-# Helper function to create a UI input based on ui_type ################
-# Modify this function to handle additional ui_type variants as needed #
-#----------------------------------------------------------------------#
+# ============================================================================ #
+#  dynamic-helper.R – build UI elements from Walnut_grain_veg_tub.xlsx rows    #
+#  Added: category-based global filtering                                      #
+# ============================================================================ #
 
+# tiny helper used throughout -------------------------------------------------
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
+sanitize_id <- function(x) gsub("[^A-Za-z0-9]", "_", x)
+
+# --------------------------------------------------------------------------- #
+#  create_ui_element()                                                        #
+#  row = one line from the Excel sheet                                        #
+# --------------------------------------------------------------------------- #
 create_ui_element <- function(row) {
+  
+  # -------- basic fields from spreadsheet ------------------------------------
   input_id    <- row[["variable"]]
   label       <- row[["description"]]
-  min_val     <- row[["lower"]]
-  max_val     <- row[["upper"]]
+  min_val     <- as.numeric(row[["lower"]])
+  max_val     <- as.numeric(row[["upper"]])
   distr       <- row[["distribution"]]
   ui_type     <- row[["ui_type"]]
-  ui_step     <- row[["ui_steps"]]
+  ui_step     <- as.numeric(row[["ui_steps"]])
   ui_cond     <- row[["ui_conditional"]]
   ui_cond_nam <- row[["ui_conditional_name"]]
   ui_opt_nam  <- row[["ui_option_name"]]
   ui_opt_var  <- row[["ui_option_variable"]]
+  category    <- row[["Expertise"]] %||% ""        # NEW
   
-  ### debug setion
-  # input_id    <- all_sheets[[1]][1, ][["variable"]]
-  # label       <- all_sheets[[1]][1, ][["description"]]
-  # min_val     <- all_sheets[[1]][1, ][["lower"]]
-  # max_val     <- all_sheets[[1]][1, ][["upper"]]
-  # ui_type     <- all_sheets[[1]][1, ][["ui_type"]]
-  # ui_step     <- all_sheets[[1]][1, ][["ui_steps"]]
-  # ui_cond     <- all_sheets[[1]][1, ][["ui_conditional"]]
-  # ui_cond_nam <- all_sheets[[1]][1, ][["ui_conditional_name"]]
-  # ui_opt_nam  <- all_sheets[[1]][1, ][["ui_option_name"]]
-  # ui_opt_var  <- all_sheets[[1]][1, ][["ui_option_variable"]]
+  # -------- value ranges ------------------------------------------------------
+  default        <- min_val
+  default_2side  <- c(min_val, max_val)
   
-  ui_step <- as.numeric(ui_step)
+  if (distr %in% c("posnorm", "tnorm_0_1")) min_val <- 0
+  else min_val <- min_val - abs(min_val) * 0.5
   
-  min_val <- as.numeric(min_val)
-  max_val <- as.numeric(max_val)
+  if (distr == "tnorm_0_1") max_val <- 1
+  else max_val <- max_val + abs(max_val) * 0.5
   
-  default <- min_val
-  default_2side <- c(min_val, max_val)
+  ui_cond <- if (!is.null(ui_cond)) as.logical(ui_cond) else FALSE
   
-  if (distr %in% c("posnorm","tnorm_0_1")) {
-    min_val <- 0
-  } else min_val <- min_val - abs(min_val)*0.5
-  if (distr == "tnorm_0_1") {
-    max_val <- 1
-  } else max_val <- max_val + abs(max_val)*0.5
-
-    
-  # default <- as.numeric(min_val)
-  # default_2side <- c(as.numeric(min_val), as.numeric(max_val))
-  # 
-  # min_val <- as.numeric(min_val) - abs(min_val)/2
-  # max_val <- as.numeric(max_val) + abs(max_val)/2
-  # ui_step <- as.numeric(ui_step)
-  
-  ui_cond <- if (!is.null(ui_cond)) {
-    as.logical(ui_cond)
-  }else ui_cond <- F
-  
-  # default <- (min_val+max_val)/2
-  # default_2side <- c((min_val+default)/2, (max_val+default)/2)
-  
+  # -------- select inputs need their choices split ---------------------------
   if (startsWith(ui_type, "select")) {
-    ui_opt_nam  <- unlist(strsplit(ui_opt_nam, " next_option "))
-    ui_opt_var  <- unlist(strsplit(ui_opt_var, " next_option "))
+    ui_opt_nam  <- unlist(strsplit(ui_opt_nam,  " next_option "))
+    ui_opt_var  <- unlist(strsplit(ui_opt_var,  " next_option "))
     names(ui_opt_var) <- ui_opt_nam
   }
   
-  
-  real_ui <- NULL
-  if (ui_type == "header") {
-    # 
-    # if (ui_cond) {
-    #   toggle_id <- paste0(input_id, "_toggle")
-    #   checkboxInput(
-    #     inputId = toggle_id,
-    #     label   = tags$span(style = "font-size: 120%; font-weight: bold;", header),
-    #     value   = FALSE
-    #   )
-    # }else 
-    real_ui <- tagList(
+  # -------- create the actual shiny control ----------------------------------
+  real_ui <- switch(
+    ui_type,
+    "header"  = tagList(
       tags$span(style = "font-size: 120%; font-weight: bold;", label),
-      br(),
-      br(),
-    )
-    
-  }else if (ui_type == "slider1") {
-    real_ui <- sliderInput(
-      inputId  = input_id,
-      label    = label,
-      min      = min_val,
-      max      = max_val,
-      value    = default,
-      step     = ui_step
-    )
-  } else if (ui_type == "slider2") {
-    real_ui <- sliderInput(
-      inputId  = input_id,
-      label    = label,
-      min      = min_val,
-      max      = max_val,
-      value    = default_2side,
-      step     = ui_step
-    )
-  } else if (ui_type == "numeric") {
-    real_ui <- numericInput(
-      inputId = input_id,
-      label   = label,
-      value   = default,
-      step    = ui_step
-    )
-  } else if (ui_type == "select") {
-    real_ui <- selectInput(
-      inputId  = input_id,
-      label    = label, 
-      choices  = ui_opt_var,
-      selected = NULL
-    )
-  } else if (ui_type == "select2") {
-    real_ui <- selectInput(
-      inputId  = input_id,
-      label    = label, 
-      choices  = ui_opt_var,
-      selected = NULL,
-      multiple = T
-    )
-  } else {
-    # Fallback / unknown ui_type
-    real_ui <- textInput(
-      inputId = input_id,
-      label   = paste(label, "(unrecognized ui_type)"),
-      value   = ""
-    )
-  }
+      br(), br()),
+    "slider1" = sliderInput(input_id, label, min_val, max_val,
+                            default, step = ui_step),
+    "slider2" = sliderInput(input_id, label, min_val, max_val,
+                            default_2side, step = ui_step),
+    "numeric" = numericInput(input_id, label, default, step = ui_step),
+    "select"  = selectInput(input_id, label, choices = ui_opt_var),
+    "select2" = selectInput(input_id, label, choices = ui_opt_var,
+                            multiple = TRUE),
+    # fallback
+    textInput(input_id, paste(label, "(unrecognised ui_type)"), "")
+  )
   
-  #####################         conditional will only hide single elements         #####################
+  # -------- optional element-level toggle ------------------------------------
   if (ui_cond) {
     toggle_id <- paste0(input_id, "_toggle")
-    
-    return(
-      tagList(
-        checkboxInput(
-          inputId = toggle_id,
-          label   = ui_cond_nam,
-          value   = FALSE
-        ),
-        conditionalPanel(
-          condition = sprintf("input['%s']", toggle_id),
-          real_ui
-        )
-      )
+    real_ui <- tagList(
+      checkboxInput(toggle_id, ui_cond_nam, value = FALSE),
+      conditionalPanel(sprintf("input['%s']", toggle_id), real_ui)
     )
-  } else {
-    return(real_ui)
   }
+  
+  # --------------------------------------------------------------------------- #
+  #  GLOBAL CATEGORY FILTER                                                    #
+  # --------------------------------------------------------------------------- #
+  category <- trimws(category)
+  if (category == "" || is.na(category)) return(real_ui)
+  
+  cats_vec <- trimws(unlist(strsplit(category, ";")))
+  if (length(cats_vec) == 0) return(real_ui)
+  
+  # IDs of the cat_* checkboxes defined at top of sidebar (see app.R)
+  cat_inputs <- sprintf("input['cat_%s']", sanitize_id(cats_vec))
+  or_part    <- paste(cat_inputs, collapse = " || ")
+  
+  # show when *no* boxes are ticked OR one of its own cats is ticked
+  show_all <- paste0(
+    "Object.keys(input)",
+    ".filter(function(k){return k.startsWith('cat_');})",
+    ".every(function(k){ return input[k] === false; })"
+  )
+  js_condition <- sprintf("(%s) || (%s)", show_all, or_part)
+  
+  conditionalPanel(js_condition, real_ui)
 }
-
-#--------------------------------------------------------------------------------- ###
-# Accordion panels (helper function to create and accordion panel for each sheet) ####
-#--------------------------------------------------------------------------------- ###
-# create_accordion_panel <- function(sheet_name, sheet_data) {
-#   toggle_id <- NULL
-#   display_panel <- TRUE
-#   if (grepl("_q$", sheet_name)) {
-#     toggle_id <- sheet_name
-#     display_panel <- FALSE
-#   }
-#   
-#   ui_elements <- lapply(seq_len(nrow(sheet_data)), function(i) {
-#     create_ui_element(sheet_data[i, ])
-#   })
-#   
-#   panel_ui <- accordion_panel(
-#     title = sub("_q$", "", sheet_name),
-#     do.call(tagList, ui_elements)
-#   )
-#   
-#   if (!is.null(toggle_id)) {
-#     return(tagList(
-#       checkboxInput(toggle_id, paste("Enable", sub("_q$", "", toggle_id), "?"), FALSE),
-#       conditionalPanel(
-#         condition = sprintf("input['%s']", toggle_id),
-#         panel_ui,
-#         br()
-#       )
-#     ))
-#   } else {
-#     return(tagList(panel_ui,br()))
-#   }
-# }
-
-##### server side whole panel
-
-
-### generate whole accordion based on sheets - less flexible
-# # Create UI dynamically based on the sheets
-# output$dynamic_sheets_ui <- renderUI({
-#   data_list <- excelData()  # triggers read from file
-#   sheet_names <- names(data_list)
-#   
-#   # Build one panel per sheet
-#   panel_list <- lapply(sheet_names, function(sht) {
-#     create_accordion_panel(sht, data_list[[sht]])
-#   })
-#   
-#   # Return as a list of UI elements
-#   tagList(panel_list)
-# })

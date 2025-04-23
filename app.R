@@ -62,7 +62,10 @@ source("functions/dynamic-helper.R")
 source("functions/Walnut_grain_veg_tub_mcsim-only.R")
 source("functions/funding_server.R")
 file_path_vars <- "data/Walnut_grain_veg_tub.xlsx"
-sheet_names <- unlist( readxl::read_excel(file_path_vars, sheet = "sheet_names") )
+sheet_meta <- readxl::read_excel(file_path_vars, sheet = "sheet_names",
+                                 col_types = c("text", "text"))
+sheet_names <- sheet_meta$sheet_names
+sheet_icons <- setNames(sheet_meta$icon, sheet_meta$sheet_names)
 
 
 #-----------------------------------------------------------------------------#
@@ -645,103 +648,50 @@ server <- function(input, output, session) {
   })
   
   
-  
+  # ------ util: turns a category vector into a JS condition --------------------
+  panel_condition <- function(cat_vec) {
+    cat_vec <- trimws(cat_vec)
+    cat_vec <- cat_vec[cat_vec != "" & !is.na(cat_vec)]
+    if (length(cat_vec) == 0) return("true")   # always show
+    ids <- sprintf("input['cat_%s']", sanitize_id(cat_vec))
+    show_all <- paste0(
+      "Object.keys(input).filter(k=>k.startsWith('cat_')).",
+      "every(k=>input[k]===false)"
+    )
+    sprintf("(%s) || (%s)", show_all, paste(ids, collapse = " || "))
+  }
   
   
   output$dynamic_element_ui <- renderUI({
-    data_list <- excelData()
+    
+    data_list   <- excelData()
     sheet_names <- names(data_list)
-    sheet_num <- length(data_list)
-    element_list <- list()
-    for (j in 1:sheet_num) {
-      element_list[[j]] <-
-        lapply(seq_len(nrow(data_list[[j]])),
-               function(i) {
-                 create_ui_element(data_list[[j]][i, ])
-               })
-      # if (endsWith(names(data_list[[j]]), "_q")) {
-      #
-      # }
-      #
-    }
-    # View(element_list)
     
-    tagList(
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[1]),
-        icon = icon("bullseye"),
-        #h4("System Modulators"),
-        element_list[[1]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[2]),
-        icon = icon("grip"),
-        #h4("Farm Details"),
-        element_list[[2]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[3]),
-        icon = icon("cart-shopping"),
-        #h4("System Modulators"),
-        element_list[[3]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[4]),
-        icon = icon("people-group"),
-        #h4("System Modulators"),
-        element_list[[4]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[5]),
-        icon = icon("seedling"),
-        #h4("System Modulators"),
-        element_list[[5]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[6]),
-        icon = icon("tree"),
-        #h4("System Modulators"),
-        element_list[[6]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[7]),
-        icon = icon("route"),
-        #h4("System Modulators"),
-        element_list[[7]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[8]),
-        icon = icon("person-chalkboard"),
-        #h4("System Modulators"),
-        element_list[[8]]
-      ),
-      # ---- old funding ----
-      # accordion_panel(
-      #   title = sub("_q$", "", sheet_names[9]),
-      #   icon = icon("check-double"),
-      #   #h4("System Modulators"),
-      #   element_list[[9]]
-      # ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[10]),
-        icon = icon("atom"),
-        #h4("System Modulators"),
-        element_list[[10]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[11]),
-        icon = icon("square-poll-vertical"),
-        #h4("System Modulators"),
-        element_list[[11]]
-      ),
-      accordion_panel(
-        title = sub("_q$", "", sheet_names[12]),
-        icon = icon("water"),
-        #h4("System Modulators"),
-        element_list[[12]]
+    # build one accordion panel per sheet --------------------------------------
+    panels <- lapply(seq_along(data_list), function(j) {
+      
+      sheet <- data_list[[j]]
+      
+      cats <- unique(trimws(unlist(strsplit(sheet$Expertise %||% "", ";|,"))))
+      cats <- cats[cats != ""]
+      
+      ui_elems <- lapply(seq_len(nrow(sheet)), function(i) {
+        create_ui_element(sheet[i, ])
+      })
+      
+      cond <- panel_condition(cats)   # JS condition built earlier
+      
+      conditionalPanel(
+        condition = cond,             # << wrap entire panel
+        accordion_panel(
+          title = sheet_names[j],
+          icon  = icon(sheet_icons[[ sheet_names[j] ]] %||% "circle-dot"),
+          tagList(ui_elems)
+        )
       )
-    )
+    })
     
+    tagList(panels)   # render the list
   })
   
   #-----------------------------------------------------------------------------#

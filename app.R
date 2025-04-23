@@ -749,68 +749,76 @@ server <- function(input, output, session) {
   #-----------------------------------------------------------------------------#
   
   mcSimulation_results <- eventReactive(input$run_simulation, {
+    
     message("Accessing user input estimates from the interface...")
     
-    exclude_inputs <- c("collapseSidebar", "save", "load", "delete", "confirm_delete",
-                        "admin_selected_user", "project_name", "version_select", "delete_version_select")
-    variables <- setdiff(names(input)[grepl("(_c$|_p$|_t$|_n$|_cond$)", names(input))], exclude_inputs)
+    # ---- 1. Gather current widget values --------------------------------------
+    exclude_inputs <- c("collapseSidebar", "save", "load", "delete",
+                        "confirm_delete", "admin_selected_user",
+                        "project_name", "version_select", "delete_version_select")
     
-    lower_values <- sapply(variables, function(var) {
-      value <- input[[var]]
-      if (length(value) == 1) as.numeric(value) else as.numeric(value[1])
+    variables <- setdiff(
+      names(input)[grepl("(_c$|_p$|_t$|_n$|_cond$)", names(input))],
+      exclude_inputs
+    )
+    
+    lower_values <- sapply(variables, function(v) {
+      val <- input[[v]]
+      if (length(val) == 1) as.numeric(val) else as.numeric(val[1])
     })
-    upper_values <- sapply(variables, function(var) {
-      value <- input[[var]]
-      if (length(value) == 1) as.numeric(value) else as.numeric(value[2])
+    upper_values <- sapply(variables, function(v) {
+      val <- input[[v]]
+      if (length(val) == 1) as.numeric(val) else as.numeric(val[2])
     })
-    # distributions <- sapply(variables, function(var) {
-    #   if (grepl("_c$", var)) "const" else if (grepl("_p$", var)) "posnorm" else if (grepl("_t$", var)) "tnorm_0_1" else if (grepl("_n$", var)) "norm"
-    # })
     
-    data_excel_original <- excelData()
-    data_excel_original_r <- sapply(data_excel_original, nrow)
-    data_excel_original_n <- names(data_excel_original)
+    # ---- 2. Re-read Excel (keeps original bounds & distributions) -------------
+    all_sheets <- excelData()            # list of data-frames
+    input_file <- bind_rows(all_sheets)  # one big table
     
-    excel_temp <- data_excel_original %>%
-      do.call("rbind",.)
+    # Overwrite lower/upper with current UI inputs
+    input_file <- input_file %>%
+      left_join(
+        tibble(variable = variables,
+               lower    = lower_values,
+               upper    = upper_values),
+        by = "variable",
+        suffix = c("", ".new")
+      ) %>%
+      mutate(
+        lower = coalesce(lower.new, lower),
+        upper = coalesce(upper.new, upper)
+      ) %>%
+      select(-ends_with(".new"))
     
-    df_tmp <- data.frame(variable = variables,
-                         lower = lower_values,
-                         upper = upper_values)
-    
-    idx <- match(excel_temp$variable, df_tmp$variable)
-    excel_temp$lower <- lower_values[idx]
-    excel_temp$upper <- upper_values[idx]
-    # excel_temp&distributions <- distributions
-    
-    sheet_index <- rep(seq_along(data_excel_original_r), data_excel_original_r)
-    data_excel_updated <- split(excel_temp, sheet_index)
-    names(data_excel_updated) <- data_excel_original_n
-    
-    saveRDS(c(list(sheet_names),data_excel_updated), "data/Walnut_grain_veg_tub_ui_updated.RDS")
-    
-    input_file <- data_excel_updated %>% bind_rows()
-    
-    
-    # ------------------------------------------------------------------
-    # >>> NEW: overwrite / append the seven variables coming from
-    #          the dynamic funding wrapper and make sure nothing is NA
-    # ------------------------------------------------------------------
+    # ---- 3. Append funding scalars -------------------------------------------
     fund_df <- funding_variables()
-    print(fund_df)
     fund_df$lower[is.na(fund_df$lower)] <- 0
     fund_df$upper[is.na(fund_df$upper)] <- 0
+    
     input_file <- bind_rows(
       input_file %>% filter(!variable %in% fund_df$variable),
       fund_df
     )
     
+    # ---- 4. Save UI snapshot (optional) ---------------------------------------
+    saveRDS(list(sheet_names, input_file), "data/Walnut_grain_veg_tub_ui_updated.RDS")
+    
+    # ---- 5. FINAL clean-up: keep only numeric rows ----------------------------
+    input_file <- input_file %>%
+      filter(
+        !is.na(lower), !is.na(upper),
+        is.finite(lower), is.finite(upper)
+      )
+    
+    # ---- 6. Run Monte-Carlo ---------------------------------------------------
     decisionSupport::mcSimulation(
-      estimate = decisionSupport::as.estimate(input_file),
-      model_function = Walnut_grain_veg_tub,
+      estimate          = decisionSupport::as.estimate(input_file),
+      model_function    = Walnut_grain_veg_tub,
       numberOfModelRuns = input$num_simulations_c,
-      functionSyntax = "plainNames")
+      functionSyntax    = "plainNames"
+    )
   })
+  
   
   observeEvent(mcSimulation_results(), {
     

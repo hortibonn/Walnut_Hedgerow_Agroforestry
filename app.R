@@ -640,7 +640,7 @@ server <- function(input, output, session) {
     sheet_number <- seq_along(sheet_names)+1
     all_sheets <- lapply(sheet_number, function(sht) {
       readxl::read_excel(file_path_vars, sheet = sht,
-                         col_types = c("text", "numeric", "numeric", "text", "text", "text", "guess", "guess","text")
+                         ,col_types = c("text", "numeric", "numeric", "text", "text", "text", "text", "guess", "guess", "text")
       )
     })
     names(all_sheets) <- sheet_names

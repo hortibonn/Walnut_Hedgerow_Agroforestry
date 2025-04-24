@@ -72,9 +72,9 @@ create_ui_element <- function(row) {
     names(ui_opt_var) <- ui_opt_nam
   }
   
-  tooltip_wrapper <- function(ui_element, tooltip_text) {
-    withTags(div(title = tooltip_text, ui_element))
-  }
+  # tooltip_wrapper <- function(ui_element, tooltip_text) {
+  #   withTags(div(title = tooltip_text, ui_element))
+  # }
   
   
   label_with_tooltip <- function(id, label_text) {

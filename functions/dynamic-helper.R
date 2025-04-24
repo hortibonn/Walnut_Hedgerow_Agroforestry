@@ -77,8 +77,11 @@ create_ui_element <- function(row) {
   # }
   
   
-  label_with_tooltip <- function(id, label_text) {
-    tags$label(`for` = id, title = label_text, label_text)
+  label_with_tooltip <- function(input_id, input_alias, tooltip) {
+    tags$label(`for` = input_id,
+               title = tooltip,
+               style = "font-weight: bold; cursor: help;",
+               input_alias)
   }
   
   real_ui <- switch(
@@ -87,26 +90,30 @@ create_ui_element <- function(row) {
       tags$span(style="font-size:120%;font-weight:bold;", label),
       br(), br()),
     "slider1" = tagList(
-      label_with_tooltip(input_id, label),
+      label_with_tooltip(input_id, input_alias, label),
       sliderInput(input_id, NULL, min_val, max_val, default, step = ui_step)
     ),
     "slider2" = tagList(
-      label_with_tooltip(input_id, label),
+      label_with_tooltip(input_id, input_alias, label),
       sliderInput(input_id, NULL, min_val, max_val, default_2side, step = ui_step)
     ),
     "numeric" = tagList(
-      label_with_tooltip(input_id, label),
+      label_with_tooltip(input_id, input_alias, label),
       numericInput(input_id, NULL, default, step = ui_step)
     ),
-    "select" = tagList(
-      label_with_tooltip(input_id, label),
+    "select"  = tagList(
+      label_with_tooltip(input_id, input_alias, label),
       selectInput(input_id, NULL, choices = ui_opt_var)
     ),
     "select2" = tagList(
-      label_with_tooltip(input_id, label),
+      label_with_tooltip(input_id, input_alias, label),
       selectInput(input_id, NULL, choices = ui_opt_var, multiple = TRUE)
     ),
-    textInput(input_id, paste(label, "(unrecognised ui_type)"), "")
+    # fallback
+    tagList(
+      label_with_tooltip(input_id, input_alias, label),
+      textInput(input_id, NULL, "")
+    )
   )
   
   if (ui_cond) {

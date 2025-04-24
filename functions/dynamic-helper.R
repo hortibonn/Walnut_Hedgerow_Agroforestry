@@ -72,8 +72,8 @@ create_ui_element <- function(row) {
     names(ui_opt_var) <- ui_opt_nam
   }
   
-  tooltip_wrapper <- function(ui_element, tooltip_text) {
-    withTags(div(title = tooltip_text, ui_element))
+  label_with_tooltip <- function(id, label_text) {
+    tags$label(`for` = id, title = label_text, label_text)
   }
   
   real_ui <- switch(
@@ -81,14 +81,27 @@ create_ui_element <- function(row) {
     "header"  = tagList(
       tags$span(style="font-size:120%;font-weight:bold;", label),
       br(), br()),
-    "slider1" = tooltip_wrapper(sliderInput(input_id, label, min_val, max_val,
-                                            default, step = ui_step), label),
-    "slider2" = tooltip_wrapper(sliderInput(input_id, label, min_val, max_val,
-                                            default_2side, step = ui_step), label),
-    "numeric" = tooltip_wrapper(numericInput(input_id, label, default, step = ui_step), label),
-    "select"  = tooltip_wrapper(selectInput(input_id, label, choices = ui_opt_var), label),
-    "select2" = tooltip_wrapper(selectInput(input_id, label, choices = ui_opt_var, multiple = TRUE), label),
-    tooltip_wrapper(textInput(input_id, paste(label, "(unrecognised ui_type)"), ""), label)
+    "slider1" = tagList(
+      label_with_tooltip(input_id, label),
+      sliderInput(input_id, NULL, min_val, max_val, default, step = ui_step)
+    ),
+    "slider2" = tagList(
+      label_with_tooltip(input_id, label),
+      sliderInput(input_id, NULL, min_val, max_val, default_2side, step = ui_step)
+    ),
+    "numeric" = tagList(
+      label_with_tooltip(input_id, label),
+      numericInput(input_id, NULL, default, step = ui_step)
+    ),
+    "select" = tagList(
+      label_with_tooltip(input_id, label),
+      selectInput(input_id, NULL, choices = ui_opt_var)
+    ),
+    "select2" = tagList(
+      label_with_tooltip(input_id, label),
+      selectInput(input_id, NULL, choices = ui_opt_var, multiple = TRUE)
+    ),
+    textInput(input_id, paste(label, "(unrecognised ui_type)"), "")
   )
   
   if (ui_cond) {

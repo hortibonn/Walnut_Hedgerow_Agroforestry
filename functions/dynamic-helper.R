@@ -14,7 +14,7 @@ create_ui_element <- function(row) {
     
     ui_obj <- switch(
       special,
-      "header4"        = h4(row[["description"]] %||% ""),
+      "header4"        = h4(row[["name"]] %||% ""),
       "horizontal line"= tags$hr(),
       "break"          = tags$br()
     )

@@ -53,11 +53,15 @@ create_ui_element <- function(row) {
   default        <- min_val
   default_2side  <- c(min_val, max_val)
   
-  if (distr %in% c("posnorm", "tnorm_0_1")) min_val <- 0
-  else min_val <- min_val - abs(min_val) * 0.5
+  if (distr == "posnorm") {
+    min_val <- 0
+  } else if  (distr == "tnorm_0_1"){
+    min_val <- 0.05
+  } else min_val <- min_val - abs(min_val)*0.5
   
-  if (distr == "tnorm_0_1") max_val <- 1
-  else max_val <- max_val + abs(max_val) * 0.5
+  if (distr == "tnorm_0_1") {
+    max_val <- 0.95
+  } else max_val <- max_val + abs(max_val)*0.5
   
   ui_cond <- if (!is.null(ui_cond)) as.logical(ui_cond) else FALSE
   

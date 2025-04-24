@@ -272,15 +272,18 @@ ui <- fluidPage(
                                   icon = icon("play"), class = "btn-primary")
                    ),
                    br(),
-                   accordion_panel(
-                     title = tags$span("Expertise categories", 
-                                       title = "Select your main expertise to modify only the variables suited to such expertise.
-                                       Ultimately, we are all experts to a higher or lower degree in all categories. You too :)
-                                       But we recommend that the first time you use this interface you select only one or two categories in order to get familiar with it.
-                                       The simulations will still run with the default values for those expertise categories that you do not select"),
-                     icon = icon("clipboard-question"),
+                   tagList(
+                     tags$h5(
+                       "Expertise categories",
+                       tags$span(
+                         icon("circle-question"),
+                         title = "Select your main expertise to modify only the variables suited to such expertise. Ultimately, we are all experts to a higher or lower degree in all categories. You too :) But we recommend that the first time you use this interface you select only one or two categories in order to get familiar with it. The simulations will still run with the default values for those expertise categories that you do not select",
+                         style = "cursor: help; margin-left: 8px;"
+                       )
+                     ),
                      uiOutput("category_filter_ui")
-                   ),
+                   )
+                 ),
                    br(),
                    
                    # accordion_panel(

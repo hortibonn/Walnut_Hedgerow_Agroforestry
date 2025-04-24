@@ -36,9 +36,6 @@ ontogenic_growth_gompertz <- function (max_harvest,
   return(yield_n_years_real)
 }
 
-
-
-
 Walnut_grain_veg_tub <- function(x,varnames) 
 {
   #message("Starting DA function...")

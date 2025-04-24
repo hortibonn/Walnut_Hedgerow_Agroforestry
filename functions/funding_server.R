@@ -13,8 +13,8 @@ create_funding_ui <- function(id, data_path = "data/funding_data.xlsx", sheet = 
     uiOutput(ns("funding_annual_ui")),   # Annual funding dropdown
     # private financial support 
     
-    numericInput(ns("onetime_private"), "One-time private support [GBP]",min = 1, max = 1000000, value = 500),
-    numericInput(ns("annual_private"), "Annual private support [GBP/ha]", min = 1, max = 5000, value = 50)
+    numericInput(ns("onetime_private"), "One-time private support [€]",min = 1, max = 1000000, value = 500),
+    numericInput(ns("annual_private"), "Annual private support [€/ha]", min = 1, max = 5000, value = 50)
   )
 }
 

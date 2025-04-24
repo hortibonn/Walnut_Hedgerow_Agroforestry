@@ -36,8 +36,9 @@ create_ui_element <- function(row) {
     return(conditionalPanel(js_cond, ui_obj))
   }
   
-  # ---------- ORIGINAL logic for real input widgets --------------------------
+  # ---------- MODIFIED logic for real input widgets --------------------------
   input_id    <- row[["variable"]]
+  input_alias <- row[["name"]]
   label       <- row[["description"]]
   min_val     <- as.numeric(row[["lower"]])
   max_val     <- as.numeric(row[["upper"]])
@@ -71,20 +72,23 @@ create_ui_element <- function(row) {
     names(ui_opt_var) <- ui_opt_nam
   }
   
+  tooltip_wrapper <- function(ui_element, tooltip_text) {
+    withTags(div(title = tooltip_text, ui_element))
+  }
+  
   real_ui <- switch(
     ui_type,
     "header"  = tagList(
       tags$span(style="font-size:120%;font-weight:bold;", label),
       br(), br()),
-    "slider1" = sliderInput(input_id, label, min_val, max_val,
-                            default, step = ui_step),
-    "slider2" = sliderInput(input_id, label, min_val, max_val,
-                            default_2side, step = ui_step),
-    "numeric" = numericInput(input_id, label, default, step = ui_step),
-    "select"  = selectInput(input_id, label, choices = ui_opt_var),
-    "select2" = selectInput(input_id, label, choices = ui_opt_var,
-                            multiple = TRUE),
-    textInput(input_id, paste(label, "(unrecognised ui_type)"), "")
+    "slider1" = tooltip_wrapper(sliderInput(input_id, label, min_val, max_val,
+                                            default, step = ui_step), label),
+    "slider2" = tooltip_wrapper(sliderInput(input_id, label, min_val, max_val,
+                                            default_2side, step = ui_step), label),
+    "numeric" = tooltip_wrapper(numericInput(input_id, label, default, step = ui_step), label),
+    "select"  = tooltip_wrapper(selectInput(input_id, label, choices = ui_opt_var), label),
+    "select2" = tooltip_wrapper(selectInput(input_id, label, choices = ui_opt_var, multiple = TRUE), label),
+    tooltip_wrapper(textInput(input_id, paste(label, "(unrecognised ui_type)"), ""), label)
   )
   
   if (ui_cond) {

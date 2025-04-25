@@ -333,7 +333,7 @@ ui <- fluidPage(
                  )
                  
     ),
-    mainPanel(width = 8),
+    mainPanel(width = 8, 
               plotOutput("plot1_ui"),
               plotOutput("plot2_ui"),
               plotOutput("plot3_ui"),
@@ -342,7 +342,7 @@ ui <- fluidPage(
               plotOutput("plot6_ui"),
               plotOutput("plot7_ui"),
               plotOutput("plot8_ui"),
-              plotOutput("plot9_ui"),
+              plotOutput("plot9_ui")
     )
   )
   

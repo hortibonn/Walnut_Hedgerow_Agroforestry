@@ -247,7 +247,8 @@ ui <- fluidPage(
                style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
       # ),
       
-      tags$h2("Agroforestry adoption with dual-purpose trees (food and wood)",
+      tags$h2("Decision Analysis the conversion of treeless cropland
+              into alley-cropping with dual-purpose (food and wood) trees",
               style = "text-align: center; flex-grow: 1;"),
       
       # tags$a(href = "https://www.uni-bonn.de", target = "_blank",

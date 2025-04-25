@@ -933,7 +933,7 @@ server <- function(input, output, session) {
         warning("EVPI plot skipped due to error: ", e$message)
         output$plot7_ui <- renderPlot({
           plot.new()
-          text(0.5, 0.5, "There are no variables with a positive EVPI.\nGetting better information will not reduce the level of uncertainty of the decision.", cex = 1.2)
+          text(0.5, 0.5, "There are no variables with a positive EVPI.\nGetting better information will \nnot reduce the level of uncertainty of the decision.", cex = 1.2)
         })
       })
     })

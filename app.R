@@ -247,7 +247,7 @@ ui <- fluidPage(
                style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
       # ),
       
-      tags$h2("Walnut alley cropping",
+      tags$h2("Agroforestry adoption with dual-purpose trees (food and wood)",
               style = "text-align: center; flex-grow: 1;"),
       
       # tags$a(href = "https://www.uni-bonn.de", target = "_blank",

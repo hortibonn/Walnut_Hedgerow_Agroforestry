@@ -936,6 +936,7 @@ server <- function(input, output, session) {
           text(0.5, 0.5, "There are no variables with a positive EVPI.\nGetting better information will not reduce the level of uncertainty of the decision.", cex = 1.2)
         })
       })
+    })
     
   })
   

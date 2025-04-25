@@ -333,17 +333,6 @@ ui <- fluidPage(
                  )
                  
     ),
-    mainPanel(width = 8, 
-              h5("Hola amigos!"),
-              #column(width = 4,
-              tags$a("Click here for latest info on Sustainable Farming Incentive",
-                     href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
-                     target="_blank",
-                     class = "my-btn"
-                     #)
-              ),
-              br(),
-              h5('Plots'),
               plotOutput("plot1_ui"),
               plotOutput("plot2_ui"),
               plotOutput("plot3_ui"),

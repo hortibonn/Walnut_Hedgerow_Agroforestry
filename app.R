@@ -247,10 +247,9 @@ ui <- fluidPage(
                style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
       # ),
       
-      tags$h2("Decision Analysis:",
-              style = "text-align: center; flex-grow: 1;"),
-      
-      tags$h2("conversion of treeless cropland into alley-cropping",
+      tags$h2("Decision Analysis:
+              
+              conversion of treeless cropland into alley-cropping",
               style = "text-align: center; flex-grow: 1;"),
       
       # tags$a(href = "https://www.uni-bonn.de", target = "_blank",

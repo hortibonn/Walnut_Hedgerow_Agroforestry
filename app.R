@@ -247,8 +247,8 @@ ui <- fluidPage(
                style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
       # ),
       
-      tags$h2("Decision Analysis: treeless cropland to
-              alley-cropping with dual-purpose trees",
+      tags$h2("Decision Analysis: 
+      conversion of treeless cropland into alley-cropping",
               style = "text-align: center; flex-grow: 1;"),
       
       # tags$a(href = "https://www.uni-bonn.de", target = "_blank",

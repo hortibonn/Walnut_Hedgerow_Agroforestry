@@ -374,7 +374,6 @@ Walnut_grain_veg_tub <- function(x,varnames)
     rotation_length <- ifelse(round(rotation_length_p)<1, 1, round(rotation_length_p))
     planting_age <- ifelse(round(planting_age_p)<1, 1, round(planting_age_p))
     
-    for (i in 1:planting_density){
     stand_growth_curve <- ontogenic_growth_gompertz(max_harvest = max_volume_p,
                                                     time_to_first_yield_estimate = time_first_volume_est_c,
                                                     time_to_second_yield_estimate = time_sec_volume_est_c,
@@ -383,23 +382,12 @@ Walnut_grain_veg_tub <- function(x,varnames)
                                                     n_years = ifelse(rotation_length > n_years_c, rotation_length*2, n_years_c*2),
                                                     no_yield_before_first_estimate = FALSE
     )
-    tree_volume <- tree_growth_curve[round(planting_age): 
-                                       (rotation_length+round(planting_age)-1)]
-    trees_growth_potential[[i]] <- tree_volume
-    
-    eventual_death_before_harvest <- chance_event(chance = tree_mortality_chance, n = 1)
-    eventual_death_before_harvest
-    if (eventual_death_before_harvest == 1){
-      tree_volume[sample(rotation_length-1, 1):rotation_length] <- 0
-    }
-    trees_actual_growth[[i]] <- tree_volume
-    }
     
     if (rotation_length > n_years_c){
-      growing_timber_volume <- tree_volume[planting_age: 
+      growing_timber_volume <- stand_growth_curve[planting_age: 
                                                     (n_years_c+planting_age-1)] * field_area_c
     } else {
-      growing_timber_volume <- tree_volume[planting_age: 
+      growing_timber_volume <- stand_growth_curve[planting_age: 
                                                     (rotation_length+planting_age-1)] * field_area_c
     }
     

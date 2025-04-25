@@ -926,7 +926,7 @@ server <- function(input, output, session) {
         } else {
           output$plot7_ui <- renderPlot({
             plot.new()
-            text(0.5, 0.5, "There are no variables with a positive EVPI.\nYou probably do not need a plot for that.", cex = 1.2)
+            text(0.5, 0.5, "There are no variables with a positive EVPI. You probably do not need a plot for that.", cex = 1.2)
           })
         }
       }, error = function(e) {

@@ -911,11 +911,10 @@ server <- function(input, output, session) {
         evpi_result <- decisionSupport::multi_EVPI(mc_df, "NPV_decision_AF1")
         
         if (!is.null(evpi_result$evpi) && nrow(evpi_result$evpi) > 0) {
-          evpi_vars <- evpi_result$evpi$variable
           top_evpi <- evpi_result$evpi %>%
-            dplyr::filter(evpi > 0) %>%
-            dplyr::arrange(desc(evpi)) %>%
-            dplyr::slice_head(n = 10)
+            filter(evpi > 0) %>%
+            arrange(desc(evpi)) %>%
+            slice_head(n = 10)
           
           plot7 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1") +
             scale_y_discrete(labels = var_lookup) +
@@ -927,17 +926,16 @@ server <- function(input, output, session) {
         } else {
           output$plot7_ui <- renderPlot({
             plot.new()
-            text(0.5, 0.5, "No variables with a positive EVPI", cex = 1.2)
+            text(0.5, 0.5, "There are no variables with a positive EVPI.\nYou probably do not need a plot for that.", cex = 1.2)
           })
         }
       }, error = function(e) {
         warning("EVPI plot skipped due to error: ", e$message)
         output$plot7_ui <- renderPlot({
           plot.new()
-          text(0.5, 0.5, "EVPI plot not available due to an error.", cex = 1.2)
+          text(0.5, 0.5, "There are no variables with a positive EVPI.\nGetting better information will not reduce the level of uncertainty of the decision.", cex = 1.2)
         })
       })
-    })
     
   })
   

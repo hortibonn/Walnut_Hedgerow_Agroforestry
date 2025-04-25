@@ -284,9 +284,9 @@ ui <- fluidPage(
                            
                            But we recommend that the first time you use this interface you select only one or two categories in order to get familiar with it. The simulations will still run with the default values for those expertise categories that you do not select.
                            
-                           If you do not check any box, you will see all the variables of the model.
+                           If you do not check any box, you will see all the variables of the model (i.e.: all expertise categories).
                            
-                           If you are the decision maker, e.g.: you are a farmer thinking about implementing agroforestry in treeles land, please check the Decision Maker box to set basic variables that serve to make a quantitative estimations of your interests and motivations",
+                           If you are the decision maker, e.g.: you are a farmer thinking about implementing agroforestry in treeles land, please check the Decision Maker box to set basic variables that serve to quantify your interests and motivations",
                            style = "cursor: help; margin-left: 8px;"
                          )
                        ),

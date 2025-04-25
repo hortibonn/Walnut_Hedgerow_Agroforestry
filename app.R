@@ -280,7 +280,11 @@ ui <- fluidPage(
                          "Expertise categories",
                          tags$span(
                            icon("circle-question"),
-                           title = "Select your main expertise to modify only the variables suited to such expertise. Ultimately, we are all experts to a higher or lower degree in all categories. You too :) But we recommend that the first time you use this interface you select only one or two categories in order to get familiar with it. The simulations will still run with the default values for those expertise categories that you do not select",
+                           title = "Select your main expertise to modify only the variables suited to such expertise. Ultimately, we are all experts to a higher or lower degree in all categories. You too :) 
+                           
+                           But we recommend that the first time you use this interface you select only one or two categories in order to get familiar with it. The simulations will still run with the default values for those expertise categories that you do not select.
+                           
+                           If you are the decision maker, e.g.: you are a farmer thinking about implementing agroforestry in treeles land, you want to check the Decision Maker box to set basic variables of your interests and motivations",
                            style = "cursor: help; margin-left: 8px;"
                          )
                        ),

@@ -792,9 +792,10 @@ server <- function(input, output, session) {
                                           vars = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
                                           method = 'smooth_simple_overlay',
                                           old_names = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "NPV")+
-      ggtitle("Net Present Value (over a 40-years' timescope) of a farming decision")+
+                                          new_names = c("Agroforestry intervention", "Cultivation without integrating trees"),
+                                          x_axis_name = "NPV (€)",
+                                          y_axis_name = "Probability")+
+      ggtitle("Net Present Value of a farming decision")+
       #ggtitle("Carbon stock of in the aboveground biomass of a clear-cut agroforestry plot")+
       theme(plot.title = element_text(hjust = 0.5),
             #axis.text.y=element_blank(),
@@ -807,330 +808,113 @@ server <- function(input, output, session) {
     
     plot2 <- 
       decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
-                                          method = 'boxplot',
-                                          old_names = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "NPV")+
-      ggtitle("Net Present Value (over a 40-years' timescope) of a farming decision")+
-      theme(plot.title = element_text(hjust = 0.5))
+                                          vars = c("NPV_decision_AF1"),
+                                          method = 'smooth_simple_overlay',
+                                          old_names = c("NPV_decision_AF1"),
+                                          new_names = c("Agroforestry intervention"),
+                                          x_axis_name = "NPV (€)",
+                                          y_axis_name = "Probability")+
+      ggtitle("Net Present Value of the decision to undertake the agroforestry intervention")+
+      #ggtitle("Carbon stock of in the aboveground biomass of a clear-cut agroforestry plot")+
+      theme(plot.title = element_text(hjust = 0.5),
+            #axis.text.y=element_blank(),
+            #axis.text.x=element_blank(),
+            #axis.line = element_line(arrow = arrow(type="open")),
+            #panel.border = element_blank(),
+            legend.position="none"
+      )
+    #xlim(0, 1e7)
     
     plot3 <- 
       decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("planing_costs", "planting_cost", "strips_maintenance","application_cost"),
+                                          vars = c("planing_costs", "planting_cost", "strips_maintenance", "application_cost"),
                                           method = 'boxplot',
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Wood harvest costs and income")+
+                                          old_names = c("planing_costs", "planting_cost", "strips_maintenance","application_cost"),
+                                          new_names = c("Planning and design", "Planting", "Maintenance", "Bureaucratic work time"),                                          
+                                          x_axis_name = "sum (€) over the whole simulation period",
+                                          y_axis_name = "Cost categories")+
+      ggtitle("Costs of an agroforestry intervention (€)")+
       theme(plot.title = element_text(hjust = 0.5))
     
     plot4 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("nuts_costs","nut_sales"),
-                                          method = 'boxplot',
-                                          old_names = c("nuts_costs", "nut_sales"),
-                                          new_names = c("Production costs", "Sales"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Walnuts production direct costs and income")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot5 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("wood_harvest_costs","wood_sales"),
-                                          method = 'boxplot',
-                                          old_names = c("wood_harvest_costs", "wood_sales"),
-                                          new_names = c("Production costs", "Sales"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Wood harvest costs and income")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot6 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("leek_AF","leek_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("leek_AF", "leek_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of leek production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot7 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("maize_AF","maize_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("maize_AF", "maize_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of maize production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot8 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("carrot_AF","carrot_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("carrot_AF", "carrot_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of carrot production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot9 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("celeriac_AF","celeriac_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("celeriac_AF", "celeriac_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of celeriac production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot10 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("potato_AF","potato_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("potato_AF", "potato_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of potato production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot11 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("wheat_AF","wheat_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("wheat_AF", "wheat_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of wheat production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot12 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("beans_AF","beans_CR"),
-                                          method = 'boxplot',
-                                          old_names = c("beans_AF", "beans_CR"),
-                                          new_names = c("Agroforestry adoption", "Continue farming without integrating trees"),
-                                          x_axis_name = "Annual sum over 40 years")+
-      ggtitle("Cashlow sum of beans production")+
-      theme(plot.title = element_text(hjust = 0.5))
-    
-    plot13 <-
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = "NPV_decision_AF1",
-                                          old_names = "NPV_decision_AF1",
-                                          new_names = "NPV (over 40 years) of establishing agroforestry system",
-                                          method = 'boxplot_density',
-                                          y_axis_name = "Probability",
-                                          x_axis_name = "Net decision outcome (NPV in Euro)")
-    
-    plot14 <- 
       decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Discounted_Cashflow_AF1", 
+                                     cashflow_var_name = "Cashflow_AF1", 
                                      x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Discounted_Cashflow (euros)")+
-      ggtitle("Discounted Cashflow of the agroforestry intervention")+
+                                     y_axis_name = "Cashflow (€)")+
+      ggtitle("Cashflow of the agroforestry intervention")+
       theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
     
-    plot15 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Discounted_Cum_Cashflow_AF1", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Discounted_Cashflow (euros)")+
-      ggtitle("Discounted cumulative Cashflow of the agroforestry intervention")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot16 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Discounted_Cashflow_AF1_decision", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Discounted_Cashflow (euros)")+
-      ggtitle("Discounted Cashflow of the agroforestry decision")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot17 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Discounted_Cum_Cashflow_AF1_decision", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Discounted_Cashflow (euros)")+
-      ggtitle("Discounted cumulative Cashflow of the agroforestry decision")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot18 <- 
+    plot5 <- 
       decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
                                      cashflow_var_name = "Cashflow_AF1_decision", 
                                      x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cashflow (euros)")+
+                                     y_axis_name = "Cashflow (€)")+
       ggtitle("Cashflow of the agroforestry decision")+
       theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
     
-    plot19 <- 
+    plot6 <- 
       decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
                                      cashflow_var_name = "Cum_Cashflow_AF1_decision", 
                                      x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cashflow (euros)")+
+                                     y_axis_name = "Cumulative Cashflow (€)")+
       ggtitle("Cumulative Cashflow of the agroforestry decision")+
       theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
     
-    plot20 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "implementation_labor", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Worker-hours")+
-      ggtitle("Worker-hours required to design and establish the agroforestry system")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
+    # ---- Send plots to UI immediately ---------------------------------------------
+    output$plot1_ui <- renderPlot({ plot1 })
+    output$plot2_ui <- renderPlot({ plot2 })
+    output$plot3_ui <- renderPlot({ plot3 })
+    output$plot4_ui <- renderPlot({ plot4 })
+    output$plot5_ui <- renderPlot({ plot5 })
+    output$plot6_ui <- renderPlot({ plot6 })
     
-    plot21 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "additional_yearly_labor", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Worker-hours")+
-      ggtitle("Time required to manage the agroforestry system (walnuts harvest excluded)")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
+    # ---- Ask user whether to run EVPI (takes time!) -------------------------------
+    showModal(modalDialog(
+      title = "Run EVPI analysis?",
+      "This step may take a while. Do you want to run the EVPI analysis now?",
+      footer = tagList(
+        modalButton("No"),
+        actionButton("confirm_evpi", "Yes, run EVPI")
+      )
+    ))
     
-    plot22 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "total_additional_labor", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Worker-hours")+
-      ggtitle("Additional time required by the agroforestry intervention (walnuts harvest excluded)")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot23 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "annual_soc_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C / ha")+
-      ggtitle("Annual soil carbon change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot24 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "cum_annual_soc_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C / ha")+
-      ggtitle("Cumulative annual soil carbon change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot25 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "soc_stock", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C / ha")+
-      ggtitle("Soil carbon stock dynamics")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot26 <-
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "annual_carbon_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("Whole ecosystem's annual carbon stock change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot27 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "cum_annual_carbon_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("Whole ecosystem's cumulative annual carbon stock change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot28 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "carbon_stock", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("Whole ecosystem's carbon stock dynamics")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot29 <-
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "AGB_carbon_stock", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("AGB carbon stock dynamics")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot30 <-
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "AGB_carbon_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("Annual AGB carbon stock change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot31 <-
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "BGB_carbon_stock", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("BGB carbon stock dynamics")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot32 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "BGB_carbon_change", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "t C")+
-      ggtitle("Annual BGB carbon stock change")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    #ylim(-500000,1000000)
-    
-    plot33 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "volume", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "m3")+
-      ggtitle("Timber volume dynamics")+
-      theme(plot.title = element_text(hjust = 0.5))#+
-    
-    #-----------------------------------------------------------------------------#
-    ## ---- sending plots to ui ---------------------------------------------------
-    #-----------------------------------------------------------------------------#
-    
-    output$plot1_ui <- renderPlot({
-      plot1
-    })
-    output$plot2_ui <- renderPlot({
-      plot2
-    })
-    output$plot3_ui <- renderPlot({
-      plot3
-    })
-    output$plot4_ui <- renderPlot({
-      plot4
-    })
-    output$plot5_ui <- renderPlot({
-      plot5
-    })
-    output$plot6_ui <- renderPlot({
-      plot6
-    })
-    output$plot7_ui <- renderPlot({
-      plot7
-    })
-    output$plot8_ui <- renderPlot({
-      plot8
-    })
-    output$plot9_ui <- renderPlot({
-      plot9
+    # ---- Handle user confirmation to run EVPI -------------------------------------
+    observeEvent(input$confirm_evpi, {
+      removeModal()  # remove popup
+      
+      # EVPI setup
+      evpi_input <- as.data.frame(cbind(
+        mc_data$x,
+        NPV_decision_AF1 = mc_data$y$NPV_decision_AF1
+      ))
+      
+      evpi_result <- decisionSupport::multi_EVPI(evpi_input, "NPV_decision_AF1")
+      
+      # Lookup for pretty labels
+      var_lookup <- bind_rows(excelData()) %>%
+        filter(!is.na(variable), !is.na(name)) %>%
+        distinct(variable, name) %>%
+        deframe()
+      
+      # Top 10 EVPI variables (or fewer if < 10 positive EVPI)
+      if (!is.null(evpi_result$evpi)) {
+        top_evpi <- evpi_result$evpi %>%
+          filter(evpi > 0) %>%
+          arrange(desc(evpi)) %>%
+          slice_head(n = 10)
+        
+        evpi_result$evpi <- top_evpi  # update to plot only top
+      }
+      
+      # EVPI plot
+      plot7 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1") +
+        scale_y_discrete(labels = function(x) var_lookup[x]) +
+        ggtitle("EVPI for Each Variable") +
+        theme_minimal() +
+        theme(plot.title = element_text(hjust = 0.5))
+      
+      output$plot7_ui <- renderPlot({ plot7 })
+      
     })
     
   })

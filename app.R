@@ -335,13 +335,73 @@ ui <- fluidPage(
                  
     ),
     mainPanel(width = 8, 
+              h5("This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field."),
+              h5("You can modify the value ranges of all the variables of the calculator by opening the tabs in left-hand side of the screen."),
+              h5("By doing so, you can account for the locally-specific environment and socio-economic context."),
+              h5("In the tab 'Expertise categories' you can select the categories for which you want to modify the default values. This is useful if you do not feel confident enough to provide estimates for all the variables of the model."),
+              h5("When clicking 'Run the model', the app will perform multiple runs of the model, each with a unique combination of values of the input variables, always within the range defined by the bars of the left-hand side tabs."),
+              h5("After the model is computed, the results will be displayed here below"),
+              h5("In the tab 'Funding schemes' you can select the funding scheme of your region of interest. If you do not find the funding schemes of your regions of interest, please contact us to include it (mjimene1@uni-bonn.de)"),
+              #column(width = 4,
+              tags$a("Click here for latest info on Sustainable Farming Incentive",
+                     href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
+                     target="_blank",
+                     class = "my-btn"
+                     #)
+              ),
+              br(),
+              h5('Figure 1:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation for decision to establish the alley cropping system (green) and the decision to continue farming without planting trees (blue).'),
               plotOutput("plot1_ui"),
+              p(
+                'Figure 1 shows the Net Present Value (NPV) distributions of the decision to establish the alley cropping system (green) 
+                and the decision to continue farming without planting trees (blue) for the timescope of interest.
+                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows).
+                The y-axis displays the probability of each NPV amount to occur (i.e.: higer y-values indicate higher probability'
+              ),
+              h5('Figure 2:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation for the decision to establish the alley cropping system as compared to the decision to continue farming without planting trees'),
               plotOutput("plot2_ui"),
+              p(
+                'Figure 2 shows the Net Present Value (NPV) distributions of the decision to establish the alley cropping system (green) 
+                as compared to the decision to continue farming without planting trees for the timescope of interest (i.e.: NPV agroforestry - NPV treeless under identical real-world scenarios).
+                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows).
+                The y-axis displays the probability of each NPV amount to occur (i.e.: higer y-values indicate higher probability'
+              ),
+              h5('Figure 3:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation for the different cost categories associated with the decision to develop the alley-cropping system'),
               plotOutput("plot3_ui"),
+              p(
+                'Figure 3 shows the costs (expressed in €) associated with each cost category of the decision to develop an alley-cropping system.
+                 The middle line of each box shows the median of its probability distribution.
+                 The extremes of each boxes show the first and third quartile of the probability distribution. 
+                 The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
+                 Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
+              ),
+              h5('Figure 4:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation of the annual balance of the alley-cropping intervention'),
               plotOutput("plot4_ui"),
+              p(
+                'Figure 4 shows the annual balance (expressed in €) of alley-cropping in the intervened field.'
+              ),
+              h5('Figure 5:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation of the cumulative annual balance of the alley-cropping intervention'),
               plotOutput("plot5_ui"),
+              p(
+                'Figure 5 shows the cumulative annual balance (expressed in €) of alley-cropping in the intervened field.'
+              ),
+              h5('Figure 6:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation of the difference between the annual balance of the alley-cropping intervention and the option of continue farming without planting trees'),
               plotOutput("plot6_ui"),
+              p(
+                'Figure 6 shows the difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.'
+              ),
+              h5('Figure 7:'),
+              h5('Probabilistic outcome distributions from Monte Carlo simulation of the difference between the cumulative annual balance of the alley-cropping intervention and the option of continue farming without planting trees'),
               plotOutput("plot7_ui"),
+              p(
+                'Figure 7 shows the cumulative difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.'
+              ),
               plotOutput("plot8_ui"),
               plotOutput("plot9_ui")
     )
@@ -846,20 +906,28 @@ server <- function(input, output, session) {
     
     plot5 <- 
       decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
+                                     cashflow_var_name = "CumCashflow_AF1", 
+                                     x_axis_name = "Timeline of the intervention (years)",
+                                     y_axis_name = "Cumulative Cashflow (€)")+
+      ggtitle("Cumulative Cashflow of the agroforestry intervention")+
+      theme(plot.title = element_text(hjust = 0.5))#+
+    
+    plot6 <- 
+      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
                                      cashflow_var_name = "Cashflow_AF1_decision", 
                                      x_axis_name = "Timeline of the intervention (years)",
                                      y_axis_name = "Cashflow (€)")+
       ggtitle("Cashflow of the agroforestry decision")+
       theme(plot.title = element_text(hjust = 0.5))#+
     
-    plot6 <- 
+    plot7 <- 
       decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
                                      cashflow_var_name = "Cum_Cashflow_AF1_decision", 
                                      x_axis_name = "Timeline of the intervention (years)",
                                      y_axis_name = "Cumulative Cashflow (€)")+
       ggtitle("Cumulative Cashflow of the agroforestry decision")+
       theme(plot.title = element_text(hjust = 0.5))#+
-    
+
     # ---- Send plots to UI immediately ---------------------------------------------
     output$plot1_ui <- renderPlot({ plot1 })
     output$plot2_ui <- renderPlot({ plot2 })
@@ -867,19 +935,23 @@ server <- function(input, output, session) {
     output$plot4_ui <- renderPlot({ plot4 })
     output$plot5_ui <- renderPlot({ plot5 })
     output$plot6_ui <- renderPlot({ plot6 })
-    
+    output$plot7_ui <- renderPlot({ plot7 })
+     
     # ---- Ask user whether to run EVPI (takes time!) -------------------------------
     showModal(modalDialog(
       title = "Run EVPI analysis?",
-      "This step may take a while. Do you want to run the EVPI analysis now?",
+      "Do you want to assess the Expected Value of Perfect Information (EVPI)?
+      This step may take a while, but you can explore the other graphs while the EVPI is processed.
+      The EVPI graph will appear at the bottom of the page, below the last of the other graphs.",
       footer = tagList(
         modalButton("No"),
         actionButton("confirm_evpi", "Yes, run EVPI")
       )
     ))
-    
+     
     # ---- Handle user confirmation to run EVPI -------------------------------------
     observeEvent(input$confirm_evpi, {
+      
       removeModal()  # remove popup
       
       # EVPI setup
@@ -916,29 +988,29 @@ server <- function(input, output, session) {
             arrange(desc(evpi)) %>%
             slice_head(n = 10)
           
-          plot7 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1") +
+          plot8 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1") +
             scale_y_discrete(labels = var_lookup) +
             ggtitle("EVPI for Each Variable") +
             theme_minimal() +
             theme(plot.title = element_text(hjust = 0.5))
           
-          output$plot7_ui <- renderPlot({ plot7 })
+          output$plot8_ui <- renderPlot({ plot7 })
         } else {
-          output$plot7_ui <- renderPlot({
+          output$plot8_ui <- renderPlot({
             plot.new()
             text(0.5, 0.5, "There are no variables with a positive EVPI. You probably do not need a plot for that.", cex = 1.2)
           })
         }
       }, error = function(e) {
         warning("EVPI plot skipped due to error: ", e$message)
-        output$plot7_ui <- renderPlot({
+        output$plot8_ui <- renderPlot({
           plot.new()
           text(0.5, 0.5, "There are no variables with a positive EVPI.\nGetting better information will \nnot reduce the level of uncertainty of the decision.", cex = 1.2)
         })
       })
     })
     
-  })
+})
   
   #-----------------------------------------------------------------------------#
   ## ---- plotting --------------------------------------------------------------

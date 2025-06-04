@@ -37,19 +37,20 @@ create_ui_element <- function(row) {
   }
   
   # ---------- MODIFIED logic for real input widgets --------------------------
-  input_id    <- row[["variable"]]
-  input_alias <- row[["name"]]
-  label       <- row[["description"]]
-  min_val     <- as.numeric(row[["lower"]])
-  max_val     <- as.numeric(row[["upper"]])
-  distr       <- row[["distribution"]]
-  ui_type     <- row[["ui_type"]]
-  ui_step     <- as.numeric(row[["ui_steps"]])
-  ui_cond     <- row[["ui_conditional"]]
-  ui_cond_nam <- row[["ui_conditional_name"]]
-  ui_opt_nam  <- row[["ui_option_name"]]
-  ui_opt_var  <- row[["ui_option_variable"]]
-  category    <- row[["Expertise"]] %||% ""
+  input_id      <- row[["variable"]]
+  input_alias   <- row[["name"]]
+  label         <- row[["description"]]
+  min_val       <- as.numeric(row[["lower"]])
+  max_val       <- as.numeric(row[["upper"]])
+  distr         <- row[["distribution"]]
+  ui_type       <- row[["ui_type"]]
+  ui_step       <- as.numeric(row[["ui_steps"]])
+  ui_cond       <- row[["ui_conditional"]]
+  ui_cond_nam   <- row[["ui_conditional_name"]]
+  ui_opt_nam    <- row[["ui_option_name"]]
+  ui_opt_var    <- row[["ui_option_variable"]]
+  category      <- row[["Expertise"]] %||% ""
+  crop_rotation <- row[["Crop_rotation"]] %||% ""
   
   default        <- min_val
   default_2side  <- c(min_val, max_val)
@@ -126,17 +127,53 @@ create_ui_element <- function(row) {
   
   # ---------- category filter wrapper for normal elements --------------------
   category <- trimws(category)
-  if (category == "" || is.na(category)) return(real_ui)
+  crop_rotation <- trimws(crop_rotation)
+  
+  if ((category == "" || is.na(category)) &&
+      (crop_rotation == "" || is.na(crop_rotation))) return(real_ui)
   
   cats_vec <- trimws(unlist(strsplit(category, ";|,")))
-  if (length(cats_vec) == 0) return(real_ui)
+  crop_vec <- trimws(unlist(strsplit(crop_rotation, ";|,")))
+  crop_vec <- crop_vec[crop_vec != "" & !is.na(crop_vec) &
+                         tolower(crop_vec) != "na"]
   
-  cat_inputs <- sprintf("input['cat_%s']", sanitize_id(cats_vec))
-  show_all   <- paste0(
-    "Object.keys(input).filter(k=>k.startsWith('cat_')).",
-    "every(k=>input[k]===false)"
-  )
-  js_cond <- sprintf("(%s) || (%s)", show_all,
-                     paste(cat_inputs, collapse = " || "))
+  if (length(cats_vec) == 0 && length(crop_vec) == 0) return(real_ui)
+  
+  # ---------------------------------------------------------------------------
+  # A.  Expertise logic  (opt-out: show rows when no cat boxes ticked)
+  # ---------------------------------------------------------------------------
+  if (length(cats_vec)) {
+    cat_inputs <- sprintf("input['cat_%s']",
+                          sanitize_id(cats_vec))
+    
+    cat_show_all <- paste0(
+      "Object.keys(input).filter(k => k.startsWith('cat_')).",
+      "every(k => input[k] === false)"
+    )
+    
+    cat_cond <- sprintf("(%s) || (%s)",
+                        cat_show_all,
+                        paste(cat_inputs, collapse = ' || '))
+  } else {
+    cat_cond <- "true"          # row has no Expertise → ignore that filter
+  }
+  
+  # ---------------------------------------------------------------------------
+  # B.  Crop-rotation logic  (opt-in: hide rows with crops until selected)
+  # ---------------------------------------------------------------------------
+  if (length(crop_vec)) {
+    crop_inputs <- sprintf("input['crop_%s']",
+                           sanitize_id(crop_vec))
+    crop_cond <- paste(crop_inputs, collapse = ' || ')
+  } else {
+    crop_cond <- "true"         # row has no crop tag → always pass
+  }
+  
+  # ---------------------------------------------------------------------------
+  # C.  Combine the two
+  # ---------------------------------------------------------------------------
+  js_cond <- sprintf("(%s) && (%s)", cat_cond, crop_cond)
+  
   conditionalPanel(js_cond, real_ui)
+  
 }

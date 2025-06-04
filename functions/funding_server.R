@@ -1,5 +1,6 @@
 # dynamic function to create funding UI based on the structure defined in funding_data.xlsx
-# function to be called in app.R 
+# function to be called in app.R
+
 create_funding_ui <- function(id, data_path = "data/funding_data.xlsx", sheet = 1) {
   ns <- NS(id) # use namespacing instead of concatenating values - ask @Adrain if this is okay...?####
   funding_data <- readxl::read_excel(data_path, sheet = sheet)
@@ -102,7 +103,7 @@ funding_server <- function(id, data_path = "data/funding_data.xlsx", sheet = 1) 
         { setNames(.$total_value, .$category_name) }
     })
     
-        
+    
     # Overall final totals (government + private)
     combined_totals <- reactive({
       cat_sum <- category_summary()

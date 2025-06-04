@@ -36,22 +36,38 @@ ontogenic_growth_gompertz <- function (max_harvest,
   return(yield_n_years_real)
 }
 
-Walnut_grain_veg_tub <- function(x,varnames) 
-{
+Walnut_grain_veg_tub <- function(
+                                 x
+                                 ,varnames
+                                 # ,crop_rotation
+                                 ) {
+  
+  # list2env(as.list(x), envir = environment())
+  # crop_rotation <- strsplit(name["crop_rotation"], ";", fixed = TRUE)[[1]]
+  
   #message("Starting DA function...")
-  Get_crop_indices <- function(Crop_rotation, Crop_name, n_years_c) {
-    Rotation_length <- length(Crop_rotation)
-    Full_rotation <- rep(Crop_rotation, length.out = n_years_c)
-    
-    # Find positions where the specified crop occurs
-    Crop_indices <- which(Full_rotation == Crop_name)
-    return(Crop_indices)
-  }
+  # Get_crop_indices <- function(Crop_rotation, Crop_name, n_years_c) {
+  #   Rotation_length <- length(Crop_rotation)
+  #   Full_rotation <- rep(Crop_rotation, length.out = n_years_c)
+  #   
+  #   # Find positions where the specified crop occurs
+  #   Crop_indices <- which(Full_rotation == Crop_name)
+  #   return(Crop_indices)
+  # }
+
+  # helper: where does a crop occur in the repeated rotation?
+  # get_indices <- function(rot, crop, n_years) {
+  #   full <- rep(rot, length.out = n_years)
+  #   which(full == crop)
+  # }
+  
+  
   # Key variables for multiple crop rotation/AF-scenarios ###############################################################
   #Initial creation of the basic variables happens here, before conditional functions,
   #crop indices etc. are then added in the conditional functions, based on the modeled scenario
   Arable_area_AF1 <- field_area_c - AF1_tree_row_area_c - AF1_hedgerow_area_c
   
+
   # Annual production of each arable crop across a continuous time series (i.e.: as if no crop rotation existed)
   Leek_yield <-vv(leek_yield_p, var_CV_p, n = n_years_c) #[t/ha]
   Maize_yield <-vv(maize_yield_p, var_CV_p, n = n_years_c)
@@ -94,6 +110,15 @@ Walnut_grain_veg_tub <- function(x,varnames)
   Beans_management_cost <- vv(beans_management_p, var_CV = var_CV_p, n = n_years_c)
   
   # Crop indices (serve to determine in which years each arable crop is cultivated)
+  
+  # Leek_indices1    <- get_indices(crop_rotation, "leek",    n_years_c)
+  # Maize_indices1   <- get_indices(crop_rotation, "maize",   n_years_c)
+  # Carrot_indices1  <- get_indices(crop_rotation, "carrot",  n_years_c)
+  # Celeriac_indices1<- get_indices(crop_rotation, "celeriac",n_years_c)
+  # Potato_indices1  <- get_indices(crop_rotation, "potato",  n_years_c)
+  # Wheat_indices1   <- get_indices(crop_rotation, "wheat",   n_years_c)
+  # Beans_indices1   <- get_indices(crop_rotation, "beans",   n_years_c)
+  
   Leek_indices1 <- seq(from = 1, to = n_years_c, by = 6)
   Maize_indices1 <- seq(from = 2, to = n_years_c, by = 6)
   Carrot_indices1 <- seq(from = 3, to = n_years_c, by = 12)

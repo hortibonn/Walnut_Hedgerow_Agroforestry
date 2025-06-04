@@ -1,18 +1,78 @@
-# Install + load libraries ----
-packages <- c("shiny", "readxl", "bslib", "sortable", "shinythemes", "shinyWidgets",
-              "decisionSupport", "tidyverse", "ggridges", "here")
+# # Install + load libraries ----
+# packages <- c("shiny", "readxl", "bslib", "sortable", "shinythemes", "shinyWidgets",
+#               "decisionSupport", "tidyverse", "ggridges", "here",
+#               "dplyr", "ggplot2", "readr")
+# 
+# if (Sys.info()[["sysname"]] == "Windows") {
+#   install_if_missing <- function(pkg) {
+#     if (!requireNamespace(pkg, quietly = TRUE))
+#       install.packages(pkg, dependencies = TRUE)
+#   }
+#   ## install what’s missing
+#   invisible(lapply(packages, install_if_missing))
+# }
+# 
+# ## then attach everything
+# lapply(packages, library, character.only = TRUE)
 
-if (Sys.info()[["sysname"]] == "Windows") {
-  install_if_missing <- function(pkg) {
-    if (!requireNamespace(pkg, quietly = TRUE))
-      install.packages(pkg, dependencies = TRUE)
-  }
-  ## install what’s missing
-  invisible(lapply(packages, install_if_missing))
+if (!requireNamespace("shiny", quietly = TRUE)) {
+  install.packages("shiny")
 }
+library(shiny)
 
-## then attach everything
-invisible(lapply(packages, library, character.only = TRUE))
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  install.packages("readxl")
+}
+library(readxl)
+
+if (!requireNamespace("bslib", quietly = TRUE)) {
+  install.packages("bslib")
+}
+library(bslib)
+
+if (!requireNamespace("shinythemes", quietly = TRUE)) {
+  install.packages("shinythemes")
+}
+library(shinythemes)
+
+if (!requireNamespace("shinyWidgets", quietly = TRUE)) {
+  install.packages("shinyWidgets")
+}
+library(shinyWidgets)
+
+if (!requireNamespace("decisionSupport", quietly = TRUE)) {
+  install.packages("decisionSupport")
+}
+library(decisionSupport)
+
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+library(tidyverse)
+
+if (!requireNamespace("readr", quietly = TRUE)) {
+  install.packages("readr")
+}
+library(readr)  # For reading and writing CSV files
+
+if (!requireNamespace("ggridges", quietly = TRUE)) {
+  install.packages("ggridges")
+}
+library(ggridges)
+
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+library(ggplot2)
+
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
+library(dplyr)
+if (!requireNamespace("here", quietly = TRUE)) {
+  install.packages("here")
+}
+library(here)
 
 # source("functions/saveLoad-module.R")
 source("functions/Walnut_grain_veg_tub_mcsim-only.R")

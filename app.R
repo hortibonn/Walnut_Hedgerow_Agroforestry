@@ -1,15 +1,17 @@
 # Install + load libraries ----
-packages <- c("shiny", "readxl", "bslib", "sortable", "shinythemes", "shinyWidgets",
-              "decisionSupport", "tidyverse", "ggridges", "here")
-
-install_if_missing <- function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE))
-    install.packages(pkg, dependencies = TRUE)
+if (Sys.info()[["sysname"]] == "Windows") {
+  packages <- c("shiny", "readxl", "bslib", "sortable", "shinythemes", "shinyWidgets",
+                "decisionSupport", "tidyverse", "ggridges", "here")
+  
+  install_if_missing <- function(pkg) {
+    if (!requireNamespace(pkg, quietly = TRUE))
+      install.packages(pkg, dependencies = TRUE)
+  }
+  ## install what’s missing
+  invisible(lapply(packages, install_if_missing))
+  ## then attach everything
+  invisible(lapply(packages, library, character.only = TRUE))
 }
-## install what’s missing
-invisible(lapply(packages, install_if_missing))
-## then attach everything
-invisible(lapply(packages, library, character.only = TRUE))
 
 # source("functions/saveLoad-module.R")
 source("functions/Walnut_grain_veg_tub_mcsim-only.R")

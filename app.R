@@ -73,6 +73,10 @@ if (!requireNamespace("here", quietly = TRUE)) {
   install.packages("here")
 }
 library(here)
+if (!requireNamespace("ggtext", quietly = TRUE)) {
+  install.packages("ggtext")
+}
+library(ggtext)
 
 # source("functions/saveLoad-module.R")
 source("functions/Walnut_grain_veg_tub_mcsim-only.R")
@@ -128,12 +132,12 @@ ui <- fluidPage(
                    id = "collapseSidebar",
                    open = FALSE,
                    
-                   br(),
                    div(
                      class = "text-center",
                      actionButton("run_simulation", "Run Model",
                                   icon = icon("play"), class = "btn-primary")
                    ),
+                   br(),
                    
                    ### Save/Load functionality ----
                    # saveLoadUI("savemod"),
@@ -141,17 +145,14 @@ ui <- fluidPage(
                      title = "Save / Load project", icon = icon("folder-open"),
                      tagList(
                        textInput("state_name", "Project name"),
-                       actionButton("save_btn",  label = tagList(icon("floppy-disk"), "Save"),
-                                    class = "btn btn-dark"),
+                       actionButton("save_btn",  label = tagList(icon("floppy-disk"),  "Save"  ), class = "btn btn-dark"),
                        
                        br(), br(),
                        selectInput("state_picker", "Saved versions", choices = NULL),
                        
                        fluidRow(
-                         column(6, actionButton("load_btn",   tagList(icon("rotate"),  "Load"),
-                                                class = "btn btn-secondary")),
-                         column(6, actionButton("delete_btn", tagList(icon("trash"),   "Delete"),
-                                                class = "btn btn-secondary"))
+                         column(6, actionButton("load_btn",   tagList(icon("rotate"),  "Load"  ), class = "btn btn-secondary")),
+                         column(6, actionButton("delete_btn", tagList(icon("trash"),   "Delete"), class = "btn btn-secondary"))
                        ),
                        hr(),
                        downloadButton("download_csv", label = tagList(icon("download"), "Download current inputs (.csv)"))
@@ -201,7 +202,7 @@ ui <- fluidPage(
                      title = "Funding schemes", icon = icon("euro-sign"),
                      create_funding_ui("funding")
                    ),
-                   
+                   br(),
                    uiOutput("dynamic_element_ui")
                    
                  )
@@ -230,78 +231,58 @@ ui <- fluidPage(
               #   )
               # ),
               tags$h5(
-                tagList(
-              "This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field.",
-              "You can modify the value ranges of all the variables of the calculator by opening the tabs in left-hand side of the screen.",
-              "By doing so, you can account for the locally-specific environment and socio-economic context.",
-              "In the tab 'Expertise categories' you can select the categories for which you want to modify the default values. This is useful if you do not feel confident enough to provide estimates for all the variables of the model.",
-              "When clicking 'Run the model', the app will perform multiple runs of the model, each with a unique combination of values of the input variables, always within the range defined by the bars of the left-hand side tabs.",
-              "After the model is computed, the results will be displayed here below",
-              "In the tab 'Funding schemes' you can select the funding scheme of your region of interest. If you do not find the funding schemes of your regions of interest, please contact us to include it (mjimene1@uni-bonn.de)",
-              )
+              "This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field.\n
+              You can modify the value ranges of all the variables of the calculator by opening the tabs in left-hand side of the screen.\n
+              By doing so, you can account for the locally-specific environment and socio-economic context.\n
+              In the tab 'Expertise categories' you can select the categories for which you want to modify the default values. This is useful if you do not feel confident enough to provide estimates for all the variables of the model.\n
+              When clicking 'Run the model', the app will perform multiple runs of the model, each with a unique combination of values of the input variables, always within the range defined by the bars of the left-hand side tabs.\n
+              After the model is computed, the results will be displayed here below\n
+              In the tab 'Funding schemes' you can select the funding scheme of your region of interest. If you do not find the funding schemes of your regions of interest, please contact us to include it (mjimene1@uni-bonn.de)"
               ),
-              #column(width = 4,
-              tags$a("Click here for latest info on Sustainable Farming Incentive",
-                     href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
-                     target="_blank",
-                     class = "my-btn"
-                     #)
+              tags$a(
+                "Click here for latest info on Sustainable Farming Incentive",
+                href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
+                target="_blank",
+                class = "my-btn"
               ),
+              br(), br(),
+              plotOutput("plot1_ui", height = "550px"),
               br(),
-              h5('Figure 1:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation for decision to establish the alley cropping system (green) and the decision to continue farming without planting trees (blue).'),
-              plotOutput("plot1_ui"),
-              p(
-                'Figure 1 shows the Net Present Value (NPV) distributions of the decision to establish the alley cropping system (green) 
-                and the decision to continue farming without planting trees (blue) for the timescope of interest.
-                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows).
-                The y-axis displays the probability of each NPV amount to occur (i.e.: higer y-values indicate higher probability'
-              ),
-              h5('Figure 2:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation for the decision to establish the alley cropping system as compared to the decision to continue farming without planting trees'),
-              plotOutput("plot2_ui"),
-              p(
-                'Figure 2 shows the Net Present Value (NPV) distributions of the decision to establish the alley cropping system (green) 
-                as compared to the decision to continue farming without planting trees for the timescope of interest (i.e.: NPV agroforestry - NPV treeless under identical real-world scenarios).
-                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows).
-                The y-axis displays the probability of each NPV amount to occur (i.e.: higer y-values indicate higher probability'
-              ),
-              h5('Figure 3:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation for the different cost categories associated with the decision to develop the alley-cropping system'),
-              plotOutput("plot3_ui"),
-              p(
-                'Figure 3 shows the costs (expressed in €) associated with each cost category of the decision to develop an alley-cropping system.
-                 The middle line of each box shows the median of its probability distribution.
-                 The extremes of each boxes show the first and third quartile of the probability distribution. 
-                 The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
-                 Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
-              ),
-              h5('Figure 4:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation of the annual balance of the alley-cropping intervention'),
-              plotOutput("plot4_ui"),
-              p(
-                'Figure 4 shows the annual balance (expressed in €) of alley-cropping in the intervened field.'
-              ),
-              h5('Figure 5:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation of the cumulative annual balance of the alley-cropping intervention'),
-              plotOutput("plot5_ui"),
-              p(
-                'Figure 5 shows the cumulative annual balance (expressed in €) of alley-cropping in the intervened field.'
-              ),
-              h5('Figure 6:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation of the difference between the annual balance of the alley-cropping intervention and the option of continue farming without planting trees'),
-              plotOutput("plot6_ui"),
-              p(
-                'Figure 6 shows the difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.'
-              ),
-              h5('Figure 7:'),
-              h5('Probabilistic outcome distributions from Monte Carlo simulation of the difference between the cumulative annual balance of the alley-cropping intervention and the option of continue farming without planting trees'),
-              plotOutput("plot7_ui"),
-              p(
-                'Figure 7 shows the cumulative difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.'
-              ),
-              plotOutput("plot8_ui"),
-              plotOutput("plot9_ui")
+              downloadButton("download_plot1", "Download Figure 1"),
+              br(), br(),br(), br(),
+              plotOutput("plot2_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot2", "Download Figure 2"),
+              br(), br(),br(), br(),
+              plotOutput("plot3_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot3", "Download Figure 3"),
+              br(), br(),br(), br(),
+              plotOutput("plot4_ui", height = "550px"),
+              br(),br(), br(),
+              downloadButton("download_plot4", "Download Figure 4"),
+              br(), br(),br(), br(),
+              plotOutput("plot5_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot5", "Download Figure 5"),
+              br(), br(),br(), br(),
+              plotOutput("plot6_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot6", "Download Figure 6"),
+              br(), br(),br(), br(),
+              plotOutput("plot7_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot7", "Download Figure 7"),
+              br(), br(),br(), br(),
+              plotOutput("plot8_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot8", "Download Figure 8"),
+              br(), br(),br(), br(),
+              plotOutput("plot9_ui", height = "550px"),
+              br(),
+              downloadButton("download_plot9", "Download Figure 9"),
+              br(), br()
+              
     )
   )
   
@@ -768,89 +749,169 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
   ## Generating plots ----
+  # helper to add title subtile caption etc
+  add_meta <- function(p, title, subtitle = NULL, caption = NULL,
+                       legend = "bottom") {
+    
+    p +
+      labs(title = title, subtitle = subtitle, caption = caption) +
+      theme(
+        plot.title = element_textbox_simple(
+          size   = 24,
+          face   = "bold",
+          width  = unit(1, "npc"),  # full plot width
+          halign = 0.5,              # centered
+          margin = margin(b = 6)
+        ),
+        plot.subtitle = element_textbox_simple(
+          size   = 18,
+          width  = unit(1, "npc"),
+          halign = 0.5,
+          margin = margin(b = 10)
+        ),
+        plot.caption  = element_textbox_simple(
+          size   = 14,
+          width  = unit(1, "npc"),
+          halign = 0,              # left-aligned
+          margin = margin(t = 6),
+          hjust = 1
+        ),
+        axis.title      = element_text(size = 14),
+        legend.text     = element_text(size = 11, hjust = 0.5),
+        legend.position = legend
+      )  }
+  
+  # download helper
+  make_download <- function(id, plot_obj, filename, width = 13, height = 5, dpi = 300) {
+    output[[id]] <- downloadHandler(
+      filename = function() filename,
+      content  = function(file) {
+        # device is inferred from file extension; here "png"
+        ggsave(file, plot_obj, width = width, height = height, dpi = dpi)
+      }
+    )
+  }
+  
+  
+  
   observeEvent(mcSimulation_results(), {
     mc_data <- mcSimulation_results()
     
-    plot1 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
+    plot1 <-
+      decisionSupport::plot_distributions(mcSimulation_object = mc_data,
                                           vars = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
-                                          method = 'smooth_simple_overlay',
+                                          method = "smooth_simple_overlay",
                                           old_names = c("NPV_Agroforestry_System1", "NPV_Treeless_System"),
-                                          new_names = c("Agroforestry intervention", "Cultivation without integrating trees"),
+                                          new_names = c("Agroforestry intervention", "Cultivation without trees"),
                                           x_axis_name = "NPV (€)",
-                                          y_axis_name = "Probability")+
-      ggtitle("Net Present Value of a farming decision")+
-      theme(plot.title = element_text(hjust = 0.5),
-            legend.position="bottom")
+                                          y_axis_name = "Probability") |>
+      add_meta(
+        title    = "Figure 1. Probabilistic distributions of Net Present Value",
+        subtitle = "Agroforestry intervention (green) vs. conventional farming (blue)",
+        caption  = "Figure 1 shows the Net Present Value (NPV) distributions of 
+        the decision to establish the alley cropping system (green) and the 
+        decision to continue farming without planting trees (blue) for the timescope
+        of interest. The x-axis displays NPV values (i.e.: the sum of discounted
+        annual cash flows). The y-axis displays the probability of each NPV amount
+        to occur (i.e.: higer y-values indicate higher probability"
+        )
     
+    plot2 <- decisionSupport::plot_distributions(
+      mc_data, "NPV_decision_AF1",
+      method     = "smooth_simple_overlay",
+      old_names  = "NPV_decision_AF1",
+      new_names  = "Agroforestry – Treeless",
+      x_axis_name= "NPV (€)",
+      y_axis_name= "Probability") |>
+      add_meta(
+        title    = "Figure 2. Distribution of the *incremental* NPV",
+        subtitle = "Difference between agroforestry and treeless farming under identical scenarios",
+        caption  = "Figure 2 shows the Net Present Value (NPV) distributions of the decision to establish the alley cropping system (green) 
+                as compared to the decision to continue farming without planting trees for the timescope of interest (i.e.: NPV agroforestry - NPV treeless under identical real-world scenarios).
+                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows).
+                The y-axis displays the probability of each NPV amount to occur (i.e.: higer y-values indicate higher probability"
+        , legend = "none")
     
-    plot2 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("NPV_decision_AF1"),
-                                          method = 'smooth_simple_overlay',
-                                          old_names = c("NPV_decision_AF1"),
-                                          new_names = c("Agroforestry intervention"),
-                                          x_axis_name = "NPV (€)",
-                                          y_axis_name = "Probability")+
-      ggtitle("Net Present Value of the decision to undertake the agroforestry intervention")+
-      theme(plot.title = element_text(hjust = 0.5),
-            legend.position="none"
-      )
+    plot3 <- decisionSupport::plot_distributions(
+      mc_data,
+      vars      = c("planing_costs","planting_cost",
+                    "strips_maintenance","application_cost"),
+      method    = "boxplot",
+      old_names = c("planing_costs","planting_cost",
+                    "strips_maintenance","application_cost"),
+      new_names = c("Planning & design","Planting",
+                    "Maintenance","Bureaucratic work"),
+      x_axis_name = "Sum over entire time-horizon (€)",
+      y_axis_name = "Cost class") |>
+      add_meta(
+        title    = "Figure 3. Cost structure of the agroforestry project",
+        caption  = 'Figure 3 shows the costs (expressed in €) associated with each cost category of the decision to develop an alley-cropping system.
+                 The middle line of each box shows the median of its probability distribution.
+                 The extremes of each boxes show the first and third quartile of the probability distribution. 
+                 The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
+                 Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
+        )
     
-    plot3 <- 
-      decisionSupport::plot_distributions(mcSimulation_object = mc_data, 
-                                          vars = c("planing_costs", "planting_cost", "strips_maintenance", "application_cost"),
-                                          method = 'boxplot',
-                                          old_names = c("planing_costs", "planting_cost", "strips_maintenance","application_cost"),
-                                          new_names = c("Planning and design", "Planting", "Maintenance", "Bureaucratic work time"),                                          
-                                          x_axis_name = "sum (€) over the whole simulation period",
-                                          y_axis_name = "Cost categories")+
-      ggtitle("Costs of an agroforestry intervention (€)")+
-      theme(plot.title = element_text(hjust = 0.5))
+    plot4 <- decisionSupport::plot_cashflow(
+      mc_data, "Cashflow_AF1",
+      x_axis_name = "",
+      y_axis_name = "Annual cash-flow (€)") |>
+      add_meta(
+        title   = "Figure 4. Annual cash-flow of the agroforestry intervention", 
+        caption = 'Figure 4 shows the annual balance (expressed in €) of alley-cropping in the intervened field.'
+        )
     
-    plot4 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Cashflow_AF1", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cashflow (€)")+
-      ggtitle("Cashflow of the agroforestry intervention")+
-      theme(plot.title = element_text(hjust = 0.5))
+    plot5 <- decisionSupport::plot_cashflow(
+      mc_data, "CumCashflow_AF1",
+      x_axis_name = "",
+      y_axis_name = "Cumulative cash-flow (€)") |>
+      add_meta(
+        title   = "Figure 5. Cumulative cash-flow of the agroforestry intervention", 
+        caption = "Figure 5 shows the cumulative annual balance (expressed in €) of alley-cropping in the intervened field."
+        )
     
-    plot5 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "CumCashflow_AF1", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cumulative Cashflow (€)")+
-      ggtitle("Cumulative Cashflow of the agroforestry intervention")+
-      theme(plot.title = element_text(hjust = 0.5))
+    plot6 <- decisionSupport::plot_cashflow(
+      mc_data, "Cashflow_AF1_decision",
+      x_axis_name = "",
+      y_axis_name = "Annual cash-flow (€)") |>
+      add_meta(
+        title   = "Figure 6. Incremental annual cash-flow",
+        subtitle= "Agroforestry minus baseline farming",
+        caption = "Figure 6 shows the difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.")
     
-    plot6 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Cashflow_AF1_decision", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cashflow (€)")+
-      ggtitle("Cashflow of the agroforestry decision")+
-      theme(plot.title = element_text(hjust = 0.5))
+    plot7 <- decisionSupport::plot_cashflow(
+      mc_data, "Cum_Cashflow_AF1_decision",
+      x_axis_name = "",
+      y_axis_name = "Cumulative cash-flow (€)") |>
+      add_meta(
+        title   = "Figure 7. Incremental cumulative cash-flow",
+        subtitle= "Agroforestry minus baseline farming",
+        caption = 'Figure 7 shows the cumulative difference (expressed in €) between the annual balance of alley-cropping and continue farming without planting trees under identical real-world scenarios.')
     
-    plot7 <- 
-      decisionSupport::plot_cashflow(mcSimulation_object = mc_data, 
-                                     cashflow_var_name = "Cum_Cashflow_AF1_decision", 
-                                     x_axis_name = "Timeline of the intervention (years)",
-                                     y_axis_name = "Cumulative Cashflow (€)")+
-      ggtitle("Cumulative Cashflow of the agroforestry decision")+
-      theme(plot.title = element_text(hjust = 0.5))
     
     # Send plots to UI
     output$plot1_ui <- renderPlot({ plot1 })
+    make_download("download_plot1", plot1, "Figure1_NPV.png")
+    
     output$plot2_ui <- renderPlot({ plot2 })
+    make_download("download_plot2", plot2, "Figure2_Incremental_NPV.png")
+    
     output$plot3_ui <- renderPlot({ plot3 })
+    make_download("download_plot3", plot3, "Figure3_Cost_Structure.png")
+    
     output$plot4_ui <- renderPlot({ plot4 })
+    make_download("download_plot4", plot4, "Figure4_Annual_Cashflow.png")
+    
     output$plot5_ui <- renderPlot({ plot5 })
+    make_download("download_plot5", plot5, "Figure5_Cumulative_Cashflow.png")
+    
     output$plot6_ui <- renderPlot({ plot6 })
+    make_download("download_plot6", plot6, "Figure6_Incremental_Annual_CF.png")
+    
     output$plot7_ui <- renderPlot({ plot7 })
+    make_download("download_plot7", plot7, "Figure7_Incremental_Cumulative_CF.png")
+    
     
     # Ask user whether to run EVPI (takes time!)
     showModal(modalDialog(
@@ -895,9 +956,9 @@ server <- function(input, output, session) {
       
       # Try running EVPI only if it can return meaningful values
       tryCatch({
-        evpi_result <- decisionSupport::multi_EVPI(mc_df, "NPV_decision_AF1")
+        evpi_result <- decisionSupport::multi_EVPI(mc_data, "NPV_decision_AF1")
         
-        if (!is.null(evpi_result$evpi) && nrow(evpi_result$evpi) > 0) {
+        if (!is.null(evpi_result$evpi) && nrow(evpi_result$evpi) > 0) { #########      !!!!!!!!!!!!!!!!!!! länge drei ??????????
           top_evpi <- evpi_result$evpi %>%
             filter(evpi > 0) %>%
             arrange(desc(evpi)) %>%
@@ -909,7 +970,7 @@ server <- function(input, output, session) {
             theme_minimal() +
             theme(plot.title = element_text(hjust = 0.5))
           
-          output$plot8_ui <- renderPlot({ plot7 })
+          output$plot8_ui <- renderPlot({ plot8 })
         } else {
           output$plot8_ui <- renderPlot({
             plot.new()

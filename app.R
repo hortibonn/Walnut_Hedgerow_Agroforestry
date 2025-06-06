@@ -779,7 +779,7 @@ server <- function(input, output, session) {
           width  = unit(1, "npc"),
           halign = 0,              # left-aligned
           margin = margin(t = 6),
-          hjust = 1
+          hjust = 0
         ),
         axis.title      = element_text(size = 14),
         legend.text     = element_text(size = 11, hjust = 0.5),

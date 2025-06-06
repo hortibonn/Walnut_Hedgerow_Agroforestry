@@ -661,9 +661,6 @@ Walnut_grain_veg_tub <- function(
     ## ---- Sum of the sales of all tree products ----
     AF1_tree_benefit <- AF1_total_wood_income + AF1_nuts_benefit
     
-    ## ---- Sum of the sales of all tree products ----
-    AF1_tree_benefit <- AF1_total_wood_income + AF1_nuts_benefit
-    
     ## ---- Value of ecosystem services (ES) ----
     ### ---- Carbon marketing ----
     

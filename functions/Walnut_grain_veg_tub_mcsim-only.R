@@ -258,10 +258,21 @@ Walnut_grain_veg_tub <- function(
     AF1_total_investment_cost <- AF1_planning_cost + AF1_total_planting_cost #Investment cost of AF system implementation
     
     ### ---- Running costs ----
-    AF1_maintenance_cost <- rep(0, n_years_c)
-    AF1_maintenance_cost[2:n_years_c] <- vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, n_years_c-1) * field_area_c * Labour_costs[2:n_years_c]
-    AF1_maintenance_cost[c(2,3,4,5,6,8)] <- AF1_maintenance_cost[c(2,3,4,5,6,8)] + pruning_time_earlier_p * AF1_num_trees_c * Labour_costs[c(2,3,4,5,6,8)]
-    AF1_maintenance_cost[c(10,12)] <- AF1_maintenance_cost[c(10,12)] + pruning_time_later_p * AF1_num_trees_c * Labour_costs[c(10,12)]
+    early_prunings <- intersect(c(2, 3, 4, 5, 6, 8), 1:n_years_c)
+    later_prunings <- intersect(c(10,12), 1:n_years_c)
+    
+    if (rotation_length > n_years_c){
+      AF1_maintenance_cost <- rep(0, n_years_c)
+      AF1_maintenance_cost[early_prunings] <- AF1_maintenance_cost[early_prunings] + pruning_time_earlier_p * AF1_num_trees_c * Labour_costs[early_prunings]
+      AF1_maintenance_cost[later_prunings] <- AF1_maintenance_cost[later_prunings] + pruning_time_later_p * AF1_num_trees_c * Labour_costs[later_prunings]
+      AF1_maintenance_cost[2:n_years_c] <- AF1_maintenance_cost[2:n_years_c] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, n_years_c-1) * field_area_c * Labour_costs[2:n_years_c]
+    } else {
+      AF1_maintenance_cost <- rep(0, rotation_length)
+      AF1_maintenance_cost[2:rotation_length] <- AF1_maintenance_cost[2:rotation_length] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, rotation_length-1) * field_area_c * Labour_costs[2:rotation_length]
+      AF1_maintenance_cost[early_prunings] <- AF1_maintenance_cost[early_prunings] + pruning_time_earlier_p * AF1_num_trees_c * Labour_costs[early_prunings]
+      AF1_maintenance_cost[later_prunings] <- AF1_maintenance_cost[later_prunings] + pruning_time_later_p * AF1_num_trees_c * Labour_costs[later_prunings]
+      AF1_maintenance_cost <- rep_len(AF1_maintenance_cost, n_years_c)
+    }
     
     AF1_subsidy_application <- rep(0, n_years_c) #FE; Time (regarded as labour cost) spent for application of Eco Scheme subsidy [EURO]
     AF1_subsidy_application <- vv(subsidy_application_p, var_CV_p, n_years_c) * Labour_costs #application subsidy has to be repeated annually 

@@ -248,40 +248,41 @@ ui <- fluidPage(
               br(), br(),
               plotOutput("plot1_ui", height = "550px"),
               br(),
-              downloadButton("download_plot1", "Download Figure 1"),
+              uiOutput("plot1_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot2_ui", height = "550px"),
               br(),
-              downloadButton("download_plot2", "Download Figure 2"),
+              uiOutput("plot2_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot3_ui", height = "550px"),
               br(),
-              downloadButton("download_plot3", "Download Figure 3"),
+              uiOutput("plot3_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot4_ui", height = "550px"),
-              br(),br(), br(),
-              downloadButton("download_plot4", "Download Figure 4"),
+              br(),
+              uiOutput("plot4_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot5_ui", height = "550px"),
               br(),
-              downloadButton("download_plot5", "Download Figure 5"),
+              uiOutput("plot5_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot6_ui", height = "550px"),
               br(),
-              downloadButton("download_plot6", "Download Figure 6"),
+              uiOutput("plot6_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot7_ui", height = "550px"),
               br(),
-              downloadButton("download_plot7", "Download Figure 7"),
+              uiOutput("plot7_dl_ui"),
               br(), br(),br(), br(),
+              
               plotOutput("plot8_ui", height = "550px"),
               br(),
-              downloadButton("download_plot8", "Download Figure 8"),
-              br(), br(),br(), br(),
-              plotOutput("plot9_ui", height = "550px"),
-              br(),
-              downloadButton("download_plot9", "Download Figure 9"),
-              br(), br()
               
     )
   )
@@ -771,7 +772,7 @@ server <- function(input, output, session) {
           margin = margin(b = 10)
         ),
         plot.caption  = element_textbox_simple(
-          size   = 14,
+          size   = 11,
           width  = unit(1, "npc"),
           halign = 0,              # left-aligned
           margin = margin(t = 6),
@@ -893,25 +894,53 @@ server <- function(input, output, session) {
     # Send plots to UI
     output$plot1_ui <- renderPlot({ plot1 })
     make_download("download_plot1", plot1, "Figure1_NPV.png")
+    output$plot1_dl_ui <- renderUI({
+      downloadButton("download_plot1", "Download Figure 1")
+    })
     
     output$plot2_ui <- renderPlot({ plot2 })
     make_download("download_plot2", plot2, "Figure2_Incremental_NPV.png")
+    output$plot2_dl_ui <- renderUI({
+      downloadButton("download_plot2", "Download Figure 2")
+    })
     
     output$plot3_ui <- renderPlot({ plot3 })
     make_download("download_plot3", plot3, "Figure3_Cost_Structure.png")
+    output$plot3_dl_ui <- renderUI({
+      downloadButton("download_plot3", "Download Figure 3")
+    })
     
     output$plot4_ui <- renderPlot({ plot4 })
     make_download("download_plot4", plot4, "Figure4_Annual_Cashflow.png")
+    output$plot4_dl_ui <- renderUI({
+      downloadButton("download_plot4", "Download Figure 4")
+    })
     
     output$plot5_ui <- renderPlot({ plot5 })
     make_download("download_plot5", plot5, "Figure5_Cumulative_Cashflow.png")
+    output$plot5_dl_ui <- renderUI({
+      downloadButton("download_plot5", "Download Figure 5")
+    })
     
     output$plot6_ui <- renderPlot({ plot6 })
     make_download("download_plot6", plot6, "Figure6_Incremental_Annual_CF.png")
+    output$plot6_dl_ui <- renderUI({
+      downloadButton("download_plot6", "Download Figure 6")
+    })
     
     output$plot7_ui <- renderPlot({ plot7 })
     make_download("download_plot7", plot7, "Figure7_Incremental_Cumulative_CF.png")
+    output$plot7_dl_ui <- renderUI({
+      downloadButton("download_plot7", "Download Figure 7")
+    })
     
+    # output$plot8_ui <- renderPlot({ plot8 })
+    # make_download("download_plot8", plot8, "Figure8_EVPI.png")
+    # output$plot8_dl_ui <- renderUI({
+    #   downloadButton("download_plot8", "Download Figure 8")
+    # })
+    
+
     
     # Ask user whether to run EVPI (takes time!)
     showModal(modalDialog(

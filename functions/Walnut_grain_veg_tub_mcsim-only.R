@@ -258,17 +258,20 @@ Walnut_grain_veg_tub <- function(
     AF1_total_investment_cost <- AF1_planning_cost + AF1_total_planting_cost #Investment cost of AF system implementation
     
     ### ---- Running costs ----
+    rotation_length <- ifelse(round(rotation_length_p)<1, 1, round(rotation_length_p))
+    planting_age <- ifelse(round(planting_age_p)<1, 1, round(planting_age_p))
+    
     early_prunings <- intersect(c(2, 3, 4, 5, 6, 8), 1:n_years_c)
     later_prunings <- intersect(c(10,12), 1:n_years_c)
     
-    if (rotation_length_p > n_years_c){
+    if (rotation_length > n_years_c){
       AF1_maintenance_cost <- rep(0, n_years_c)
       AF1_maintenance_cost[early_prunings] <- AF1_maintenance_cost[early_prunings] + pruning_time_earlier_p * AF1_num_trees_c * Labour_costs[early_prunings]
       AF1_maintenance_cost[later_prunings] <- AF1_maintenance_cost[later_prunings] + pruning_time_later_p * AF1_num_trees_c * Labour_costs[later_prunings]
       AF1_maintenance_cost[2:n_years_c] <- AF1_maintenance_cost[2:n_years_c] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, n_years_c-1) * field_area_c * Labour_costs[2:n_years_c]
     } else {
-      AF1_maintenance_cost <- rep(0, rotation_length_p)
-      AF1_maintenance_cost[2:rotation_length_p] <- AF1_maintenance_cost[2:rotation_length_p] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, rotation_length_p-1) * field_area_c * Labour_costs[2:rotation_length_p]
+      AF1_maintenance_cost <- rep(0, rotation_length)
+      AF1_maintenance_cost[2:rotation_length] <- AF1_maintenance_cost[2:rotation_length] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, rotation_length-1) * field_area_c * Labour_costs[2:rotation_length]
       AF1_maintenance_cost[early_prunings] <- AF1_maintenance_cost[early_prunings] + pruning_time_earlier_p * AF1_num_trees_c * Labour_costs[early_prunings]
       AF1_maintenance_cost[later_prunings] <- AF1_maintenance_cost[later_prunings] + pruning_time_later_p * AF1_num_trees_c * Labour_costs[later_prunings]
       AF1_maintenance_cost <- rep_len(AF1_maintenance_cost, n_years_c)

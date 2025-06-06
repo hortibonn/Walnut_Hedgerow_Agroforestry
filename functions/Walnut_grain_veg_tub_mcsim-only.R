@@ -648,6 +648,8 @@ Walnut_grain_veg_tub <- function(
                                     no_yield_before_first_estimate = TRUE)
     alive_trees <- AF1_num_trees_c # - cumsum(dead_tree_units)
     tot_walnuts_yield <- walnuts_yield * alive_trees
+    tot_walnuts_yield <- tot_walnuts_yield[1:rotation_length]
+    tot_walnuts_yield <- rep_len(tot_walnuts_yield, n_years_c)
     tot_walnuts_yield <- chance_event(nuts_risk_t, tot_walnuts_yield, tot_walnuts_yield*(1-yield_red_nuts_risk_t))
     
     AF1_nuts_harvest_cost <- rep(0, n_years_c)
@@ -655,6 +657,9 @@ Walnut_grain_veg_tub <- function(
     
     ### ---- Sales of non-wood tree products ----
     AF1_nuts_benefit <- tot_walnuts_yield * vv(walnuts_value_p, var_CV_p, n_years_c)
+    
+    ## ---- Sum of the sales of all tree products ----
+    AF1_tree_benefit <- AF1_total_wood_income + AF1_nuts_benefit
     
     ## ---- Sum of the sales of all tree products ----
     AF1_tree_benefit <- AF1_total_wood_income + AF1_nuts_benefit

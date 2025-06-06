@@ -78,6 +78,7 @@ if (!requireNamespace("ggtext", quietly = TRUE)) {
 }
 library(ggtext)
 
+
 # source("functions/saveLoad-module.R")
 source("functions/Walnut_grain_veg_tub_mcsim-only.R")
 # source("functions/Walnut_grain_veg_tub_df.R")
@@ -231,7 +232,7 @@ ui <- fluidPage(
               #   )
               # ),
               tags$h5(
-              "This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field.\n
+                "This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field.\n
               You can modify the value ranges of all the variables of the calculator by opening the tabs in left-hand side of the screen.\n
               By doing so, you can account for the locally-specific environment and socio-economic context.\n
               In the tab 'Expertise categories' you can select the categories for which you want to modify the default values. This is useful if you do not feel confident enough to provide estimates for all the variables of the model.\n
@@ -283,6 +284,8 @@ ui <- fluidPage(
               
               plotOutput("plot8_ui", height = "550px"),
               br(),
+              uiOutput("plot8_dl_ui"),
+              br(), br(),br(), br(),
               
     )
   )
@@ -461,8 +464,8 @@ server <- function(input, output, session) {
   # 
   # # expose the final vector
   # output$rotation_vec <- renderPrint(rv$rot)
-
-
+  
+  
   ## Dynamic UI inputs ----
   
   # read in input xlsx file
@@ -493,7 +496,7 @@ server <- function(input, output, session) {
     )
     
     sprintf("(%s) || (%s)",            # show when *no* cat box ticked
-            cat_show_all,              #      …or any matching cat ticked
+            cat_show_all,              #…or any matching cat ticked
             paste(cat_ids, collapse = ' || '))
   }
   
@@ -532,7 +535,7 @@ server <- function(input, output, session) {
   
   ## Save, Load and Delete module
   all_inputs <- reactive({
-      names(input)[grepl("(_c$|_p$|_t$|_n$|_cond$)", names(input))]
+    names(input)[grepl("(_c$|_p$|_t$|_n$|_cond$)", names(input))]
   })
   
   current_input_table <- reactive({
@@ -624,7 +627,7 @@ server <- function(input, output, session) {
   
   timestamp_name <- function(raw) {
     paste0(format(Sys.time(), "%Y%m%d-%H%M%S"),"_",
-                  gsub("[^A-Za-z0-9_.-]", "_", raw), ".rds")
+           gsub("[^A-Za-z0-9_.-]", "_", raw), ".rds")
   }
   
   observeEvent(input$save_btn, {
@@ -772,7 +775,7 @@ server <- function(input, output, session) {
           margin = margin(b = 10)
         ),
         plot.caption  = element_textbox_simple(
-          size   = 11,
+          size   = 13,
           width  = unit(1, "npc"),
           halign = 0,              # left-aligned
           margin = margin(t = 6),
@@ -816,7 +819,7 @@ server <- function(input, output, session) {
         of interest. The x-axis displays NPV values (i.e.: the sum of discounted
         annual cash flows). The y-axis displays the probability of each NPV amount
         to occur (i.e.: higer y-values indicate higher probability"
-        )
+      )
     
     plot2 <- decisionSupport::plot_distributions(
       mc_data, "NPV_decision_AF1",
@@ -852,30 +855,33 @@ server <- function(input, output, session) {
                  The extremes of each boxes show the first and third quartile of the probability distribution. 
                  The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
                  Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
-        )
+      )
     
     plot4 <- decisionSupport::plot_cashflow(
       mc_data, "Cashflow_AF1",
       x_axis_name = "",
-      y_axis_name = "Annual cash-flow (€)") |>
+      y_axis_name = "Annual cash-flow (€)",
+      facet_labels = "") |>
       add_meta(
         title   = "Figure 4. Annual cash-flow of the agroforestry intervention", 
         caption = 'Figure 4 shows the annual balance (expressed in €) of alley-cropping in the intervened field.'
-        )
+      )
     
     plot5 <- decisionSupport::plot_cashflow(
       mc_data, "CumCashflow_AF1",
       x_axis_name = "",
-      y_axis_name = "Cumulative cash-flow (€)") |>
+      y_axis_name = "Cumulative cash-flow (€)",
+      facet_labels = "") |>
       add_meta(
         title   = "Figure 5. Cumulative cash-flow of the agroforestry intervention", 
         caption = "Figure 5 shows the cumulative annual balance (expressed in €) of alley-cropping in the intervened field."
-        )
+      )
     
     plot6 <- decisionSupport::plot_cashflow(
       mc_data, "Cashflow_AF1_decision",
       x_axis_name = "",
-      y_axis_name = "Annual cash-flow (€)") |>
+      y_axis_name = "Annual cash-flow (€)",
+      facet_labels = "") |>
       add_meta(
         title   = "Figure 6. Incremental annual cash-flow",
         subtitle= "Agroforestry minus baseline farming",
@@ -884,7 +890,8 @@ server <- function(input, output, session) {
     plot7 <- decisionSupport::plot_cashflow(
       mc_data, "Cum_Cashflow_AF1_decision",
       x_axis_name = "",
-      y_axis_name = "Cumulative cash-flow (€)") |>
+      y_axis_name = "Cumulative cash-flow (€)",
+      facet_labels = "") |>
       add_meta(
         title   = "Figure 7. Incremental cumulative cash-flow",
         subtitle= "Agroforestry minus baseline farming",
@@ -934,14 +941,7 @@ server <- function(input, output, session) {
       downloadButton("download_plot7", "Download Figure 7")
     })
     
-    # output$plot8_ui <- renderPlot({ plot8 })
-    # make_download("download_plot8", plot8, "Figure8_EVPI.png")
-    # output$plot8_dl_ui <- renderUI({
-    #   downloadButton("download_plot8", "Download Figure 8")
-    # })
-    
 
-    
     # Ask user whether to run EVPI (takes time!)
     showModal(modalDialog(
       title = "Run EVPI analysis?",
@@ -959,53 +959,43 @@ server <- function(input, output, session) {
       
       removeModal()  # remove popup
       
-      # EVPI setup
-      evpi_input <- as.data.frame(cbind(
-        mc_data$x,
-        NPV_decision_AF1 = mc_data$y$NPV_decision_AF1
-      ))
-      
-      evpi_result <- decisionSupport::multi_EVPI(evpi_input, "NPV_decision_AF1")
-      
-      # Lookup for pretty labels
-      var_lookup <- bind_rows(excelData()) %>%
-        filter(!is.na(variable), !is.na(name)) %>%
-        distinct(variable, name) %>%
-        deframe()
-      
-      # Top 10 EVPI variables (or fewer if < 10 positive EVPI)
-      if (!is.null(evpi_result$evpi)) {
-        top_evpi <- evpi_result$evpi %>%
-          filter(evpi > 0) %>%
-          arrange(desc(evpi)) %>%
-          slice_head(n = 10)
-        
-        evpi_result$evpi <- top_evpi  # update to plot only top
-      }
-      
       # Try running EVPI only if it can return meaningful values
       tryCatch({
-        evpi_result <- decisionSupport::multi_EVPI(mc_data, "NPV_decision_AF1")
+        evpi_input <- as.data.frame(cbind(
+          mc_data$x,
+          NPV_decision_AF1 = mc_data$y$NPV_decision_AF1
+        ))
         
-        if (!is.null(evpi_result$evpi) && nrow(evpi_result$evpi) > 0) { #########      !!!!!!!!!!!!!!!!!!! länge drei ??????????
-          top_evpi <- evpi_result$evpi %>%
-            filter(evpi > 0) %>%
-            arrange(desc(evpi)) %>%
-            slice_head(n = 10)
-          
-          plot8 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1") +
-            scale_y_discrete(labels = var_lookup) +
-            ggtitle("EVPI for Each Variable") +
-            theme_minimal() +
-            theme(plot.title = element_text(hjust = 0.5))
-          
-          output$plot8_ui <- renderPlot({ plot8 })
-        } else {
-          output$plot8_ui <- renderPlot({
-            plot.new()
-            text(0.5, 0.5, "There are no variables with a positive EVPI. You probably do not need a plot for that.", cex = 1.2)
-          })
-        }
+        evpi_result <- decisionSupport::multi_EVPI(evpi_input, "NPV_decision_AF1")
+        
+        # saveRDS(evpi_input, "evpi_input_test.rds")
+        # evpi_input <- readRDS("evpi_input_test.rds")
+        
+        # saveRDS(evpi_result, "evpi_result_test.rds")
+        # evpi_result <- readRDS("evpi_result_test.rds")
+        
+        var_lookup <- bind_rows(excelData()) %>%
+          filter(!is.na(variable), !is.na(name)) %>%
+          distinct(variable, name) %>%
+          deframe()
+        
+        plot8 <- plot_evpi(evpi_result, decision_vars = "NPV_decision_AF1",
+                           new_names = "") +
+          scale_y_discrete(labels = var_lookup)
+        
+        plot8 <- plot8 |>
+          add_meta(title = "Figure 8. EVPI for Each Variable",
+                   subtitle = "Maximum amount worth paying for perfect information on each variable."
+                   )
+        
+        output$plot8_ui <- renderPlot({ plot8 })
+        
+        make_download("download_plot8", plot8, "Figure8_EVPI.png")
+        
+        output$plot8_dl_ui <- renderUI({
+          downloadButton("download_plot8", "Download Figure 8")
+        })
+        
       }, error = function(e) {
         warning("EVPI plot skipped due to error: ", e$message)
         output$plot8_ui <- renderPlot({

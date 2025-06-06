@@ -55,8 +55,11 @@ create_ui_element <- function(row) {
   default        <- min_val
   default_2side  <- c(min_val, max_val)
   
+  
   if (distr == "posnorm") {
-    min_val <- 0
+    # min_val <- 0
+    min_val <- min_val - abs(min_val)*0.5
+    if (min_val<=0) min_val <- 0.0001
   } else if  (distr == "tnorm_0_1"){
     min_val <- 0.05
   } else min_val <- min_val - abs(min_val)*0.5

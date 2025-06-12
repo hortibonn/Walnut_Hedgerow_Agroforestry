@@ -302,10 +302,10 @@ ui <- fluidPage(
               uiOutput("plot5_dl_ui"),
               br(), br(),br(), br(),
               
-              # plotOutput("plot6_ui", height = "550px"),
-              # br(),
-              # uiOutput("plot6_dl_ui"),
-              # br(), br(),br(), br(),
+              plotOutput("plot6_ui", height = "550px"),
+              br(),
+              uiOutput("plot6_dl_ui"),
+              br(), br(),br(), br(),
               # 
               # plotOutput("plot7_ui", height = "550px"),
               # br(),
@@ -954,7 +954,23 @@ server <- function(input, output, session) {
                 The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows)and y-axis displays the probability of each NPV amount to occur (i.e., higer y-values indicate higher probability)"
         , legend = "none")
     
+    
     plot3 <- decisionSupport::plot_distributions(
+      mc_data,
+      vars      = c("NPV_decision_AF1_nofund", "NPV_decision_AF1"),
+      method    = "boxplot",
+      old_names = c("NPV_decision_AF1_nofund", "NPV_decision_AF1"),
+      new_names = c("Agroforestry without funding – Treeless", "Agroforestry with current funding – Treeless"),
+      x_axis_name = "NPV (€)",
+      y_axis_name = "Funding Options") |>
+      add_meta(
+        title    = "Figure 3. Net Present Value (NPV) of the decision with and without funding",
+        subtitle = "Agroforestry intervention with and without funding",
+        caption  = 'Figure 3 shows the comparison of net present value (NPV) outcomes for the decision of agroforestry with and without funding. The x-axis displays NPV values (i.e., the sum of discounted annual cash flows).
+        The wider the box, the greater the potential return and variability in outcomes under that funding. We see that opting to adopt agorofroestry without funding fares similar to with funding, suggesting the current financial support is insufficient to sustain and promote agroforestry.'
+      )
+    
+    plot4 <- decisionSupport::plot_distributions(
       mc_data,
       vars      = c("planing_costs","planting_cost",
                     "strips_maintenance","application_cost"),
@@ -966,15 +982,15 @@ server <- function(input, output, session) {
       x_axis_name = "Sum over entire time-horizon (€)",
       y_axis_name = "Cost class") |>
       add_meta(
-        title    = "Figure 3. Cost structure of the agroforestry project",
-        caption  = 'Figure 3 shows the costs associated with each cost category of the decision to develop an alley-cropping system.
+        title    = "Figure 4. Cost structure of the agroforestry project",
+        caption  = 'Figure 4 shows the costs associated with each cost category of the decision to develop an alley-cropping system.
                  The middle line of each box shows the median of its probability distribution.
                  The extremes of each boxes show the first and third quartile of the probability distribution. 
                  The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
                  Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
       )
     
-    plot4 <- decisionSupport::plot_cashflow(
+    plot5 <- decisionSupport::plot_cashflow(
       mc_data, "Cashflow_AF1",
       x_axis_name = "",
       y_axis_name = "Annual cash-flow from Agroforestry (€)",
@@ -983,13 +999,13 @@ server <- function(input, output, session) {
       color_median = "darkblue",
       facet_labels = "") |>
       add_meta(
-        title   = "Figure 4. Annual cash-flow of the agroforestry intervention", 
+        title   = "Figure 5. Annual cash-flow of the agroforestry intervention", 
         subtitle = "Projected yearly cash-flow variability for an agroforestry system over time",
-        caption = 'Figure 4 shows how annual cash-flow from an agroforestry intervention is expected to evolve, based on a probabilistic simulation. The shaded areas represent uncertainty ranges (from lower to upper quantiles), while the blue line shows the median outcome (expressed in €). While early years may involve negative cash flow, profitability tends to improve over time, with increasing stability. The graph highlights the long-term financial potential and risk spread of adopting agroforestry practices.'
+        caption = 'Figure 5 shows how annual cash-flow from an agroforestry intervention is expected to evolve, based on a probabilistic simulation. The shaded areas represent uncertainty ranges (from lower to upper quantiles), while the blue line shows the median outcome (expressed in €). While early years may involve negative cash flow, profitability tends to improve over time, with increasing stability. The graph highlights the long-term financial potential and risk spread of adopting agroforestry practices.'
         #caption = 'Figure 4 shows the annual balance (expressed in €) of alley-cropping in the intervened field.'
       )
     
-    plot5 <- decisionSupport::plot_cashflow(
+    plot6 <- decisionSupport::plot_cashflow(
       mc_data, "CumCashflow_AF1",
       x_axis_name = "",
       y_axis_name = "Cumulative cash-flow from Agroforestry (€)",
@@ -998,9 +1014,9 @@ server <- function(input, output, session) {
       color_median = "darkblue",
       facet_labels = "") |>
       add_meta(
-        title   = "Figure 5. Cumulative cash-flow of the agroforestry intervention", 
+        title   = "Figure 6. Cumulative cash-flow of the agroforestry intervention", 
         subtitle = "Long-term cumulative cash-flow projection for an agroforestry system",
-        caption = "Figure 5  illustrates how total cash-flow (expressed in €) accumulates over time from an agroforestry intervention, based on a range of simulated outcomes. The shaded areas represent uncertainty (spread of possible results), and the blue line indicates the median trajectory. Cumulative returns grow steadily over time, showing the long-term profitability potential of agroforestry. Despite initial variability, the system trends positively, reinforcing the case for agroforestry as a viable financial investment over the long run."
+        caption = "Figure 6  illustrates how total cash-flow (expressed in €) accumulates over time from an agroforestry intervention, based on a range of simulated outcomes. The shaded areas represent uncertainty (spread of possible results), and the blue line indicates the median trajectory. Cumulative returns grow steadily over time, showing the long-term profitability potential of agroforestry. Despite initial variability, the system trends positively, reinforcing the case for agroforestry as a viable financial investment over the long run."
         #caption = "Figure 5 shows the cumulative annual balance (expressed in €) of alley-cropping in the intervened field."
       )
     
@@ -1044,21 +1060,27 @@ server <- function(input, output, session) {
     })
     
     output$plot3_ui <- renderPlot({ plot3 })
-    make_download("download_plot3", plot3, "Figure3_Cost_Structure.png")
+    make_download("download_plot3", plot3, "Figure3_Funding_NPVs.png")
     output$plot3_dl_ui <- renderUI({
       downloadButton("download_plot3", "Download Figure 3")
     })
     
     output$plot4_ui <- renderPlot({ plot4 })
-    make_download("download_plot4", plot4, "Figure4_Annual_Cashflow.png")
+    make_download("download_plot4", plot4, "Figure4_Cost_Structure.png")
     output$plot4_dl_ui <- renderUI({
       downloadButton("download_plot4", "Download Figure 4")
     })
     
     output$plot5_ui <- renderPlot({ plot5 })
-    make_download("download_plot5", plot5, "Figure5_Cumulative_Cashflow.png")
+    make_download("download_plot5", plot5, "Figure5_Annual_Cashflow.png")
     output$plot5_dl_ui <- renderUI({
       downloadButton("download_plot5", "Download Figure 5")
+    })
+    
+    output$plot6_ui <- renderPlot({ plot6 })
+    make_download("download_plot6", plot6, "Figure6_Cumulative_Cashflow.png")
+    output$plot6_dl_ui <- renderUI({
+      downloadButton("download_plot6", "Download Figure 6")
     })
     
     # output$plot6_ui <- renderPlot({ plot6 })

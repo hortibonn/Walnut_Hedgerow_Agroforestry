@@ -732,6 +732,10 @@ Walnut_grain_veg_tub <- function(
     AF1_farm_benefit <- AF1_tree_benefit + AF1_total_annual_funding
     AF1_farm_benefit[2] <- AF1_farm_benefit[2] + AF1_total_one_time_funding
     AF1_ES_benefit <- AF1_farm_benefit + AF1_Nonmarket_ES_benefit
+    # no fund
+    AF1_farm_benefit_nofund <- AF1_tree_benefit 
+
+    AF1_ES_benefit_nofund <- AF1_farm_benefit_nofund + AF1_Nonmarket_ES_benefit
     
     ## Additional time required to establish and maintain the system, and its worth
     establishment_additional_time <- rep(0, n_years_c)
@@ -762,6 +766,11 @@ Walnut_grain_veg_tub <- function(
     ## Profits of the agroforestry system (i.e.: the difference between the income and the costs):
     AF1_bottom_line_benefit <- AF1_total_benefit_CR1 + worth_self_fulfilling_time - AF1_total_cost_CR1
     
+    ## Time series of the annual income perceived from the management of the agroforestry system
+    AF1_total_benefit_CR1_nofund <- AF1_ES_benefit_nofund + AF1_Leek_benefit_CR1 + AF1_Maize_benefit_CR1 + AF1_Carrot_benefit_CR1 + AF1_Celeriac_benefit_CR1 + AF1_Potato_benefit_CR1 + AF1_Wheat_benefit_CR1 + AF1_Beans_benefit_CR1
+ ## Profits of the agroforestry system (i.e.: the difference between the income and the costs):
+    AF1_bottom_line_benefit_nofund <- AF1_total_benefit_CR1_nofund + worth_self_fulfilling_time - AF1_total_cost_CR1
+    
   }#Will only be calculated if user checks the box "Crop rotation 1" for AF 1
   
   ## ---- Net Present Value (NPV) and cashflows ----
@@ -785,11 +794,20 @@ Walnut_grain_veg_tub <- function(
   AF1_decision_discounted_benefit <- discount(AF1_decision_benefit, discount_rate = discount_rate_p,
                                               calculate_NPV = FALSE)
   
+  AF1_NPV_nofund <- discount(AF1_bottom_line_benefit_nofund, discount_rate=discount_rate_p,
+                      calculate_NPV = TRUE)#NVP of AF system
+  AF1_decision_benefit_nofund  <- AF1_bottom_line_benefit_nofund  - Treeless_bottom_line_benefit
+  AF1_NPV_decision_nofund  <- discount(AF1_decision_benefit_nofund , discount_rate = discount_rate_p,
+                               calculate_NPV = TRUE)
+  
   ## ---- Choose output variables ----
   return(list(
     NPV_Agroforestry_System1 = AF1_NPV,
     NPV_Treeless_System = Treeless_NPV,
     NPV_decision_AF1 = AF1_NPV_decision,
+    NPV_Agroforestry_System1_nofund = AF1_NPV_nofund,
+    NPV_decision_AF1_nofund = AF1_NPV_decision_nofund,
+    
     Cashflow_AF1 = AF1_bottom_line_benefit,
     CumCashflow_AF1 = cumsum(AF1_bottom_line_benefit),
     Discounted_Cashflow_AF1 = AF1_discounted_cash_flow,

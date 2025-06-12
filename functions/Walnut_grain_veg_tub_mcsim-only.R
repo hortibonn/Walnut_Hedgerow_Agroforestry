@@ -695,16 +695,39 @@ Walnut_grain_veg_tub <- function(
     AF1_Nonmarket_ES_benefit <- AF1_co2_benefit + AF1_GW_benefit + AF1_erosion_control_benefit 
     
     ## ---- External funds' support ----
+    # one-time funding related to initial cost, funding_onetime_percentage_initial_cost_schemes_c
+    Funding_onetime_percentage_initial_cost_schemes <- AF1_total_investment_cost * funding_onetime_percentage_initial_cost_schemes_c
+    # one-time funding related to consultant cost,funding_onetime_percentage_consult_schemes_c
+    Funding_onetime_percentage_initial_cost_schemes <- planning_consulting_p * funding_onetime_percentage_consult_schemes_c
+    # one-time funding EURO/tree, funding_onetime_per_tree_schemes_c
+    Funding_onetime_per_tree_schemes <- AF1_num_trees_c * funding_onetime_per_tree_schemes_c
+    #one-time funding EURO/m treerow, funding_onetime_per_m_treerow_schemes_c
+    Funding_onetime_per_m_treerow_schemes <- AF1_tree_row_length_c * funding_onetime_per_m_treerow_schemes_c
+    #one-time funding EURO/m hedgerow, funding_onetime_per_m_hedgerow_schemes_c
+    Funding_onetime_per_m_hedgerow_schemes <- AF1_hedgerow_row_length_c * funding_onetime_per_m_hedgerow_schemes_c
+    #total one time
+    AF1_total_one_time_funding <-  Funding_onetime_percentage_initial_cost_schemes + Funding_onetime_percentage_initial_cost_schemes + Funding_onetime_per_tree_schemes + 
+                                    Funding_onetime_per_m_treerow_schemes + Funding_onetime_per_m_hedgerow_schemes + onetime_external_support_c
+    
+    #annual funding schemes EURO/ha/yr, annual_funding_schemes_c
+    Annual_funding_schemes <-  rep((AF1_tree_row_area_c * annual_funding_schemes_c),  n_years_c)
+    # annual funding EURO/200m row, annual_funding_per_m_schemes_c
+    Annual_funding_per_m_schemes <- rep(((AF1_tree_row_length_c/200) * annual_funding_per_m_schemes_c),  n_years_c)
+    # annual external funding
+    Annual_external_support <- rep((AF1_tree_row_area_c *annual_external_support_c),  n_years_c)
+    #total annual
+    AF1_total_annual_funding <- Annual_funding_schemes + Annual_funding_per_m_schemes + Annual_external_support
+    
     # check if support with percentage of investment cost is selected by the user
-    if (selected_percentage_c == 1) {
-      AF1_percentage_funding <- sum(AF1_percentage_values_c * AF1_total_investment_cost)
-      AF1_total_one_time_funding <- AF1_total_one_time_funding_c + AF1_percentage_funding
-    } else {
-      AF1_total_one_time_funding <- AF1_total_one_time_funding_c
-    }
-    # Subsidy in AF system
-    # AF1_subsidy[1:n_years_c] <- AF1_subsidy * AF1_tree_row_area_c
-    AF1_total_annual_funding <- rep(AF1_total_annual_funding_c, n_years_c)
+    # if (selected_percentage_c == 1) {
+    #   AF1_percentage_funding <- sum(AF1_percentage_values_c * AF1_total_investment_cost)
+    #   AF1_total_one_time_funding <- AF1_total_one_time_funding_c + AF1_percentage_funding
+    # } else {
+    #   AF1_total_one_time_funding <- AF1_total_one_time_funding_c
+    # }
+    # # Subsidy in AF system
+    # # AF1_subsidy[1:n_years_c] <- AF1_subsidy * AF1_tree_row_area_c
+    # AF1_total_annual_funding <- rep(AF1_total_annual_funding_c, n_years_c)
     
     AF1_farm_benefit <- AF1_tree_benefit + AF1_total_annual_funding
     AF1_farm_benefit[2] <- AF1_farm_benefit[2] + AF1_total_one_time_funding

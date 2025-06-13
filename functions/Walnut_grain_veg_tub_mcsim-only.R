@@ -768,11 +768,13 @@ Walnut_grain_veg_tub <- function(
     self_fulfilling_time[total_additional_time >= labor_time_threshold_p] <- labor_time_threshold_p * sense_of_purpose_t
     
     worth_self_fulfilling_time <- self_fulfilling_time * Labour_costs
+
+    AF1_subsidy_application_cost <- AF1_subsidy_application * Labour_costs
     
     ## Time series of the annual income perceived from the management of the agroforestry system
     AF1_total_benefit_CR1 <- AF1_ES_benefit + AF1_Leek_benefit_CR1 + AF1_Maize_benefit_CR1 + AF1_Carrot_benefit_CR1 + AF1_Celeriac_benefit_CR1 + AF1_Potato_benefit_CR1 + AF1_Wheat_benefit_CR1 + AF1_Beans_benefit_CR1
     ## Time series of costs associated with the integration of the woody strips which occur in other years different to the year of establishment
-    AF1_total_running_cost <- AF1_subsidy_application + AF1_nuts_harvest_cost + AF1_maintenance_cost + AF1_timber_harvest_cost #+ AF1_annual_irrigation_cost
+    AF1_total_running_cost <- AF1_subsidy_application_cost + AF1_nuts_harvest_cost + AF1_maintenance_cost + AF1_timber_harvest_cost #+ AF1_annual_irrigation_cost
     ## Time series of costs associated with the integration of the woody strips
     AF1_total_treerow_cost <- AF1_total_investment_cost + AF1_total_running_cost
     ## Time series of the annual costs incurred by the production of all arable crops' in the agroforestry system

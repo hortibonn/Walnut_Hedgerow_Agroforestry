@@ -278,7 +278,21 @@ Walnut_grain_veg_tub <- function(
     }
     
     AF1_subsidy_application <- rep(0, n_years_c) #FE; Time (regarded as labour cost) spent for application of Eco Scheme subsidy [EURO]
-    AF1_subsidy_application <- vv(subsidy_application_p, var_CV_p, n_years_c) * Labour_costs #application subsidy has to be repeated annually 
+    #bureaucracy_time <- rep(0, n_years) # hours spent on applying for financial support or other bureaucratic requirements
+    AF1_subsidy_application  <- vv(application_time_annual_support_p,
+                           var_CV = 0,
+                           n = n_years_c,
+                           relative_trend = -1*trend_application_time_annual_support_p,
+                           lower_limit = application_time_annual_support_p*min_application_time_annual_support_t)
+    # the CV is applied on a second vv() step because, otherwise, once the lower limit of the previous step is reached, no more variability is experienced any more
+    AF1_subsidy_application <- vv(AF1_subsidy_application ,
+                           var_CV = var_CV_p,
+                           n = n_years_c,
+                           lower_limit = 1# this is to avoid the lower value to reach 0
+    )
+    
+    # AF1_subsidy_application [1] <- vv(subsidy_application_p, var_CV_p, n_years_c) * Labour_costs #application subsidy has to be repeated annually 
+    # AF1_subsidy_application [2:n_years_c] <- AF1_subsidy_application [1] *0.1
     
     AF1_annual_irrigation <- rep(0, n_years_c) #FE; Cost of annual irrigation of tree rows [EURO]
     #AF1_annual_irrigation[1:3] <- vv(irrigation_123_p, var_CV = var_CV_p, 3)
@@ -742,7 +756,7 @@ Walnut_grain_veg_tub <- function(
     establishment_additional_time[1] <- farmer_planning_time_p + (tree_planting_p * AF1_num_trees_c)
     
     annual_additional_time <- rep(0, n_years_c)
-    annual_additional_time <- vv(subsidy_application_p, var_CV_p, n_years_c)
+    annual_additional_time <- AF1_subsidy_application #vv(subsidy_application_p, var_CV_p, n_years_c)
     annual_additional_time[2:n_years_c] <- annual_additional_time[2:n_years_c] + vv(woody_strip_undergrowth_maintenance_time_p, var_CV_p, n_years_c-1)*field_area_c
     annual_additional_time[c(2,3,4,5,6,8)] <- annual_additional_time[c(2,3,4,5,6,8)] + pruning_time_earlier_p*AF1_num_trees_c
     annual_additional_time[c(10,12)] <- annual_additional_time[c(10,12)] + pruning_time_later_p*AF1_num_trees_c

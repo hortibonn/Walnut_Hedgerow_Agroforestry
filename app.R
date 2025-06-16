@@ -108,27 +108,30 @@ ui <- fluidPage(
   theme = bs_theme(version = 5,
                    bootswatch = 'flatly',
                    base_font = font_google("Roboto")), 
-  ## Title ----
-  titlePanel(
-    tags$div(
-      style = "display:flex; align-items:center;justify-content:space-between;
+  # Set actual browser tab title and favicon
+  tags$head(
+    tags$title("Agroforestry Decision Support Tool"),
+    tags$link(rel = "shortcut icon", href = "INRES.png")
+  ), 
+  
+  tags$div(
+    style = "display:flex; align-items:center;justify-content:space-between;
       width: 100% !important; margin: 20px; padding: 0 15px;
       box-sizing: border-box; background-color: #f2f2f2;",
-      
-      # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
-      tags$img(src = "UniBonnHortiBonn_logo_transparent.png", height = "100px",
-               style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
-      # ),
-      # Provide Title of the DA model
-      tags$h2(tags$div("Decision:"),
-              tags$div("convert treeless cropland into walnut alley-cropping and hedges"),
-              style = "text-align: center; flex-grow: 1;"),
-      # Provide Project Logo
-      # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
-      tags$img(src = "ReFOREST_logo_horizontal_transparent.png", height = "100px",
-               style = "margin-right: auto; max-width: 30%; height: auto; cursor: pointer;")
-      # ),
-    ),
+    
+    # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
+    tags$img(src = "UniBonnHortiBonn_logo_transparent.png", height = "100px",
+             style = "margin-left: auto; max-width: 20%; height: auto; cursor: pointer;"),
+    # ),
+    # Provide Title of the DA model
+    tags$h2(tags$div("Decision:"),
+            tags$div("convert treeless cropland into walnut alley-cropping and hedges"),
+            style = "text-align: center; flex-grow: 1;"),
+    # Provide Project Logo
+    # tags$a(href = "https://www.uni-bonn.de", target = "_blank",
+    tags$img(src = "ReFOREST_logo_horizontal_transparent.png", height = "100px",
+             style = "margin-right: auto; max-width: 30%; height: auto; cursor: pointer;")
+    # ),
   ),
   
   ## Sidebar ----
@@ -692,7 +695,7 @@ server <- function(input, output, session) {
     
     input_file
   })
-    
+  
   #  # 3. Append funding scalars
   #   fund_df <- funding_variables()
   #   fund_df$lower[is.na(fund_df$lower)] <- 0
@@ -1095,7 +1098,7 @@ server <- function(input, output, session) {
     #   downloadButton("download_plot7", "Download Figure 7")
     #})
     
-
+    
     # Ask user whether to run EVPI (takes time!)
     showModal(modalDialog(
       title = "Run EVPI analysis?",
@@ -1140,7 +1143,7 @@ server <- function(input, output, session) {
         plot8 <- plot8 |>
           add_meta(title = "Figure 8. EVPI for Each Variable",
                    subtitle = "Maximum amount worth paying for perfect information on each variable."
-                   )
+          )
         
         output$plot8_ui <- renderPlot({ plot8 })
         

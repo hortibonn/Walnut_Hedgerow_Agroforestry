@@ -275,7 +275,8 @@ ui <- fluidPage(
                 tags$br(),
                 # "DeFAF-suggested funding for German agroforestry: Annual support of 600 € per ha of wooded area and investment costs are to be funded at 100 % for first 10 ha of wooded area, 80 % for the next 10 ha, 50 % for additional area.",
                 # tags$br(),
-                "We welcome your feedback and encourage you to suggest additional funding schemes for your region. Feel free to contact us at mjimene1@uni-bonn.de or pkasargo@uni-bonn.de or afuelle1@uni-bonn.de"
+                "We welcome your feedback and encourage you to suggest additional funding schemes for your region. Feel free to contact 
+                tags$a(href = "mailto:mjimene1@uni-bonn.de", "Marcos Jiménez Martínez"), "or" tags$a(href = "mailto:pkasargo@uni-bonn.de", "Prajna Kasargodu Anebagilu"), "or", tags$a(href = "mailto:afuelle1@uni-bonn.de", "Adrain Fuelle.")                
               ),
               # tags$h5(
               #   "This app serves to simulate the present value of converting a treeless arable field into alley cropping with fruit and/or high-value timber trees. It also allows to account for hedgerows in the hedges of the alley cropping field.\n

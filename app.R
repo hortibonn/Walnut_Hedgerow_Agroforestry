@@ -113,6 +113,23 @@ ui <- fluidPage(
     tags$title("Agroforestry Decision Support Tool"),
     tags$link(rel = "shortcut icon", href = "INRES.png")
   ), 
+    tags$style(HTML("
+    /* Scroll wrapper: scrolls horizontally *and* vertically only when needed */
+    .scroll-xy {
+      overflow-x: auto;                 /* left–right scroll  */
+      overflow-y: auto;                 /* top–bottom scroll  */
+      -webkit-overflow-scrolling: touch;/* smooth on iOS      */
+      max-height: 80vh;                 /* optional: stop it taking more than
+                                         80 % of the viewport height       */
+  }
+  
+  /* Keep any Shiny plot inside that wrapper from shrinking */
+  .scroll-xy .shiny-plot-output {
+    min-width: 900px;                 /* choose your desktop width */
+  }
+                    ")
+    )
+  ),
   
   tags$div(
     style = "display:flex; align-items:center;justify-content:space-between;
@@ -280,42 +297,58 @@ ui <- fluidPage(
               tableOutput("summary"),
               br(), br(),
               
-              plotOutput("plot1_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot1_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot1_dl_ui"),
               br(), br(),br(), br(),
               
-              plotOutput("plot2_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot2_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot2_dl_ui"),
               br(), br(),br(), br(),
               
-              plotOutput("plot3_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot3_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot3_dl_ui"),
               br(), br(),br(), br(),
               
-              plotOutput("plot4_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot4_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot4_dl_ui"),
               br(), br(),br(), br(),
               
-              plotOutput("plot5_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot5_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot5_dl_ui"),
               br(), br(),br(), br(),
               
-              plotOutput("plot6_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot6_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot6_dl_ui"),
               br(), br(),br(), br(),
               # 
+              # div(class = "scroll-xy",
               # plotOutput("plot7_ui", height = "550px"),
+              ),
               # br(),
               # uiOutput("plot7_dl_ui"),
               # br(), br(),br(), br(),
               
-              plotOutput("plot8_ui", height = "550px"),
+              div(class = "scroll-xy",
+                  plotOutput("plot8_ui", height = "550px"),
+                  ),
               br(),
               uiOutput("plot8_dl_ui"),
               br(), br(),br(), br(),
@@ -883,19 +916,19 @@ server <- function(input, output, session) {
           face   = "bold",
           width  = unit(1, "npc"),  # full plot width
           halign = 0.5,              # centered
-          margin = margin(b = 6)
+          margin = margin(t = 6, b = 12)
         ),
         plot.subtitle = element_textbox_simple(
           size   = 18,
           width  = unit(1, "npc"),
           halign = 0.5,
-          margin = margin(b = 10)
+          margin = margin(t = 6, b = 12)
         ),
         plot.caption  = element_textbox_simple(
           size   = 16,
           width  = unit(0.98, "npc"),
           halign = 0,              # left-aligned
-          margin = margin(t = 6),
+          margin = margin(t = 6, B = 12),
           hjust = 0,
           vjust = 1
         ),

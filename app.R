@@ -929,7 +929,7 @@ server <- function(input, output, session) {
           size   = 16,
           width  = unit(0.98, "npc"),
           halign = 0,              # left-aligned
-          margin = margin(t = 6, B = 12),
+          margin = margin(t = 6, b = 12),
           hjust = 0,
           vjust = 1
         ),

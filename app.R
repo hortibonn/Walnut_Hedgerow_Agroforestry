@@ -18,71 +18,71 @@
 # ## then attach everything
 # lapply(packages, library, character.only = TRUE)
 
-# if (!requireNamespace("shiny", quietly = TRUE)) {
-#   install.packages("shiny")
-# }
+if (!requireNamespace("shiny", quietly = TRUE)) {
+  install.packages("shiny")
+}
 library(shiny)
 
-# if (!requireNamespace("readxl", quietly = TRUE)) {
-#   install.packages("readxl")
-# }
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  install.packages("readxl")
+}
 library(readxl)
 
-# if (!requireNamespace("bslib", quietly = TRUE)) {
-#   install.packages("bslib")
-# }
+if (!requireNamespace("bslib", quietly = TRUE)) {
+  install.packages("bslib")
+}
 library(bslib)
 
-# if (!requireNamespace("shinythemes", quietly = TRUE)) {
-#   install.packages("shinythemes")
-# }
+if (!requireNamespace("shinythemes", quietly = TRUE)) {
+  install.packages("shinythemes")
+}
 library(shinythemes)
 
-# if (!requireNamespace("shinyWidgets", quietly = TRUE)) {
-#   install.packages("shinyWidgets")
-# }
+if (!requireNamespace("shinyWidgets", quietly = TRUE)) {
+  install.packages("shinyWidgets")
+}
 library(shinyWidgets)
 
-# if (!requireNamespace("decisionSupport", quietly = TRUE)) {
-#   install.packages("decisionSupport")
-# }
+if (!requireNamespace("decisionSupport", quietly = TRUE)) {
+  install.packages("decisionSupport")
+}
 library(decisionSupport)
 
-# if (!requireNamespace("tidyverse", quietly = TRUE)) {
-#   install.packages("tidyverse")
-# }
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
 library(tidyverse)
 
-# if (!requireNamespace("readr", quietly = TRUE)) {
-#   install.packages("readr")
-# }
+if (!requireNamespace("readr", quietly = TRUE)) {
+  install.packages("readr")
+}
 library(readr)  # For reading and writing CSV files
 
-# if (!requireNamespace("ggridges", quietly = TRUE)) {
-#   install.packages("ggridges")
-# }
+if (!requireNamespace("ggridges", quietly = TRUE)) {
+  install.packages("ggridges")
+}
 library(ggridges)
 
-# if (!requireNamespace("ggplot2", quietly = TRUE)) {
-#   install.packages("ggplot2")
-# }
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
 library(ggplot2)
 
-# if (!requireNamespace("dplyr", quietly = TRUE)) {
-#   install.packages("dplyr")
-# }
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
 library(dplyr)
-# if (!requireNamespace("here", quietly = TRUE)) {
-#   install.packages("here")
-# }
+if (!requireNamespace("here", quietly = TRUE)) {
+  install.packages("here")
+}
 library(here)
-# if (!requireNamespace("ggtext", quietly = TRUE)) {
-#   install.packages("ggtext")
-# }
+if (!requireNamespace("ggtext", quietly = TRUE)) {
+  install.packages("ggtext")
+}
 library(ggtext)
-# if (!requireNamespace("ggh4x", quietly = TRUE)) {
-#   install.packages("ggh4x")
-# }
+if (!requireNamespace("ggh4x", quietly = TRUE)) {
+  install.packages("ggh4x")
+}
 library(ggh4x)
 
 # Provide Location of DA model script, dynamic-helper and funding-server scripts

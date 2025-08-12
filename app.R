@@ -359,8 +359,13 @@ ui <- fluidPage(
               tags$div(
                 style = "text-align:center;",
                 tags$h6("Designed and Developed by INRES Horticultural Sciences, University of Bonn ",
+                tags$p(
                 tags$a("Disclaimer", href = "https://agroreforest.eu/reforest-tools-disclaimer/",
+                target = "_blank"),
+                     " | " ,  
+                tags$a("View Source", href = "https://github.com/hortibonn/Walnut_Hedgerow_Agroforestry/",
                 target = "_blank")
+                  ),
                         )
                     ),
               br(), br(),

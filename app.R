@@ -1018,8 +1018,8 @@ server <- function(input, output, session) {
         the decision to establish the alley cropping system (green) and the 
         decision to continue farming without planting trees (blue) for the timescope
         of interest. The x-axis displays NPV values (i.e., the sum of discounted
-        annual cash flows) and y-axis displays the probability of each NPV amount
-        to occur (i.e., higer y-values indicate higher probability)."
+        annual cash flows) and the y-axis displays the probability of each NPV amount
+        to occur (i.e., higher y-values indicate higher probability)."
       )
     
     plot2 <- decisionSupport::plot_distributions(
@@ -1034,7 +1034,7 @@ server <- function(input, output, session) {
         subtitle = "Difference between agroforestry and treeless farming under identical conditions",
         caption  = "Figure 2 shows the NPV distributions of the decision to establish the alley cropping system  
                 as compared to the decision to continue farming without planting trees for the timescope of interest (i.e., NPV agroforestry - NPV treeless under identical real-world conditions).
-                The x-axis displays NPV values (i.e.: the sum of discounted annual cash flows)and y-axis displays the probability of each NPV amount to occur (i.e., higer y-values indicate higher probability)"
+                The x-axis displays NPV values (i.e., the sum of discounted annual cash flows)and the y-axis displays the probability of each NPV amount to occur (i.e., higher y-values indicate higher probability)"
         , legend = "none")
     
     
@@ -1050,7 +1050,7 @@ server <- function(input, output, session) {
         title    = "Figure 3. Net Present Value (NPV) of the decision with and without funding",
         subtitle = "Agroforestry intervention with and without funding",
         caption  = 'Figure 3 shows the comparison of net present value (NPV) outcomes for the decision of agroforestry with and without funding. The x-axis displays NPV values (i.e., the sum of discounted annual cash flows).
-        The wider the box, the greater the potential return and variability in outcomes under that funding. We see that opting to adopt agorofroestry without funding fares similar to with funding, suggesting the current financial support is insufficient to sustain and promote agroforestry.'
+        The wider the box, the greater the potential return and variability in outcomes under that funding. We see that opting to adopt agroforestry without funding fares similarly to with funding, suggesting the current financial support is insufficient to sustain and promote agroforestry.'
       )
     
     plot4 <- decisionSupport::plot_distributions(
@@ -1068,8 +1068,8 @@ server <- function(input, output, session) {
         title    = "Figure 4. Cost structure of the agroforestry project",
         caption  = 'Figure 4 shows the costs associated with each cost category of the decision to develop an alley-cropping system.
                  The middle line of each box shows the median of its probability distribution.
-                 The extremes of each boxes show the first and third quartile of the probability distribution. 
-                 The extremes of the lines show the 5th and 95th percentile of the probability distribution. Dots are outliers beyond these percentiles.
+                 The extremes of each box show the first and third quartiles of the probability distribution. 
+                 The extremes of the lines show the 5th and 95th percentiles of the probability distribution. Dots are outliers beyond these percentiles.
                  Please note that the "Bureaucratic work" and the "Maintenance" boxes show the sum of the annual costs of every year over the timescope period, whereas the "Planning and design" and "Planting" boxes occur only in one year.'
       )
     
